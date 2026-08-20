@@ -317,6 +317,7 @@ let mistakes = [];
 let currentCorrectAnswer = "";
 let currentQuestionText = "";
 
+// Fungsi untuk mengacak array
 function shuffle(array) {
     return array.sort(() => Math.random() - 0.5);
 }
@@ -355,7 +356,11 @@ function startSection(sectionNumber) {
 
 function loadQuestion() {
     const q = activeSectionData[currentQuestion];
-    currentCorrectAnswer = q.en;
+    
+    // Pembersihan string: huruf kecil & buang tanda baca
+    let cleanedString = q.en.replace(/[.,?!*()]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+    
+    currentCorrectAnswer = cleanedString;
     currentQuestionText = q.id;
     
     document.getElementById('indonesian').innerHTML = `${currentQuestion + 1}. ${q.id}`;
@@ -366,14 +371,36 @@ function loadQuestion() {
     
     answerArea.innerHTML = '';
     wordPool.innerHTML = '';
-    answerArea.className = 'answer-area'; // Reset styles
+    answerArea.className = 'answer-area'; 
     
-    // Pecah kalimat bahasa Inggris menjadi kata-kata (mempertahankan tanda baca)
-    let words = q.en.split(' ');
-    words = shuffle(words);
+    // Pecah kalimat yang sudah bersih menjadi kata-kata (KATA BENAR)
+    let correctWords = currentCorrectAnswer.split(' ');
+
+    // --- SISTEM PENGHIMPUN KATA PENGЕСOH (DECOYS) ---
+    let decoyWords = [];
+    
+    // Kumpulkan kata dari soal lain di seluruh quizData
+    quizData.forEach(item => {
+        if (item.en !== q.en) {
+            let cleanItem = item.en.replace(/[.,?!*()]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+            decoyWords.push(...cleanItem.split(' '));
+        }
+    });
+    
+    // Hapus duplikat dan buang kata yang sudah ada di jawaban benar
+    decoyWords = [...new Set(decoyWords)].filter(w => !correctWords.includes(w) && w.length > 0);
+    
+    // Acak daftar kata pengecoh dan ambil 3 kata saja
+    decoyWords = shuffle(decoyWords);
+    let selectedDecoys = decoyWords.slice(0, 3);
+    
+    // Gabungkan kata benar + kata pengecoh, lalu acak semuanya
+    let finalWords = correctWords.concat(selectedDecoys);
+    finalWords = shuffle(finalWords);
+    // ------------------------------------------------
 
     // Buat kartu untuk setiap kata
-    words.forEach(w => {
+    finalWords.forEach(w => {
         const wordBtn = document.createElement('div');
         wordBtn.className = 'word-card';
         wordBtn.innerText = w;
