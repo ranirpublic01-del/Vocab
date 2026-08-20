@@ -54,11 +54,11 @@
 
         /* --- Quiz Styles --- */
         .indonesian-text {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: bold;
             color: #2c3e50;
             margin-bottom: 20px;
-            min-height: 60px; /* Menjaga layout tidak lompat */
+            min-height: 60px; 
             display: flex;
             align-items: center;
             justify-content: center;
@@ -120,6 +120,38 @@
         .btn-menu:hover {
             background-color: #334155;
         }
+
+        /* --- Correction Styles --- */
+        .correction-container {
+            margin-top: 20px;
+            text-align: left;
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .correction-container h4 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #334155;
+            text-align: center;
+        }
+        .correction-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #cbd5e1;
+        }
+        .correction-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .corr-q { font-weight: bold; color: #334155; margin-bottom: 8px; font-size: 0.95rem; }
+        .corr-w { color: #ef4444; font-size: 0.9rem; margin-bottom: 4px; }
+        .corr-c { color: #22c55e; font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -142,8 +174,12 @@
 <!-- Layar Kuis -->
 <div id="quiz-screen" class="quiz-card" style="display: none;">
     <h3 id="quiz-title">Latihan Bahasa Inggris</h3>
+    
     <div id="indonesian" class="indonesian-text">Loading...</div>
     <div id="options" class="options-container"></div>
+    
+    <!-- Wadah untuk Koreksi -->
+    <div id="correction-container" class="correction-container"></div>
     
     <button id="next-btn" class="btn-action" onclick="nextQuestion()">Soal Berikutnya</button>
     <button id="back-menu-btn" class="btn-action btn-menu" onclick="backToMenu()">Kembali ke Menu</button>
@@ -152,7 +188,7 @@
 </div>
 
 <script>
-// Total 56 Soal (8 Section x 7 Soal)
+// Array master TIDAK DIACAK di awal, posisinya tetap berurut sesuai halaman
 const quizData = [
     // Halaman 41
     { id: "Udah sarapan?", en: "You got your breakfast?" },
@@ -171,21 +207,21 @@ const quizData = [
 
     // Halaman 42
     { id: "Aku ga suka masak.", en: "I don't like cooking." },
-    { id: "Aku tukang masak yang buruk.", en: "I'm a bad cook." }, // Diperbaiki dari 'buru'
+    { id: "Aku tukang masak yang buruk.", en: "I'm a bad cook." },
     { id: "Terlalu asin/ keasinan.", en: "It's too salty." },
     { id: "Kamu harus tambahin gula lagi.", en: "You need to add some more sugar." },
     { id: "Aku suka makanan cepat saji.", en: "I like fast food." },
     { id: "Cafe di ujung jalan sana payah.", en: "The cafe in the corner is terrible." },
     { id: "Itu rumah makan prasmanan?", en: "Is it a buffet restaurant?" },
     { id: "Itu rumah makan *a la carte.", en: "It's an ala carte restaurant." },
-    { id: "Pelayanannya bagus tapi masakannya payah.", en: "The service is good, but the cook sucks." }, // Diperbaiki typo
+    { id: "Pelayanannya bagus tapi masakannya payah.", en: "The service is good, but the cook sucks." },
     { id: "Bisa beliin makan siang ga?", en: "Can you buy me my lunch?" },
     { id: "Bisa nitip makanan ga?", en: "Can you get me something to eat?" },
     { id: "Kamu keliatan capek. Mau ngopi sama aku?", en: "You look tired. Would you like to have a cup of coffee with me ?" },
 
     // Halaman 43
     { id: "Aku traktir.", en: "It's my treat." },
-    { id: "Emang sekarang aku butuh cafein.", en: "Caffeine is exactly what I need right now." }, // Diperbaiki typo
+    { id: "Emang sekarang aku butuh cafein.", en: "Caffeine is exactly what I need right now." },
     { id: "Cuci tanganmu dulu sebelum makan.", en: "Wash your hands before eating." },
     { id: "Aku ga suka makan pake sendok.", en: "I don't like to eat with spoon." },
     { id: "Jangan ngecap.", en: "Don't smack your lips." },
@@ -224,49 +260,48 @@ const quizData = [
 let activeSectionData = [];
 let currentQuestion = 0;
 let score = 0;
+let mistakes = []; 
 
-// Fungsi untuk mengacak array
+// Fungsi untuk mengacak urutan
 function shuffle(array) {
     return array.sort(() => Math.random() - 0.5);
 }
 
-// Fungsi kembali ke menu
 function backToMenu() {
     document.getElementById('quiz-screen').style.display = 'none';
     document.getElementById('menu-screen').style.display = 'block';
 }
 
-// Fungsi memulai section
 function startSection(sectionNumber) {
-    // Menghitung index awal dan akhir berdasarkan nomor section (7 soal per section)
     const startIndex = (sectionNumber - 1) * 7;
     const endIndex = startIndex + 7;
     
-    // Mengambil 7 soal untuk section ini
+    // 1. POTONG BERURUTAN: Ambil 7 soal sesuai urutan di array atas
     activeSectionData = quizData.slice(startIndex, endIndex);
     
-    // Acak urutan 7 soal tersebut agar tidak berurutan terus
+    // 2. ACAK SOALNYA: Setelah dipotong 7 soal, baru diacak agar saat dimainkan tidak berurutan
     activeSectionData = shuffle(activeSectionData); 
 
-    // Reset variabel
     currentQuestion = 0;
     score = 0;
+    mistakes = []; 
 
-    // Ubah tampilan
     document.getElementById('menu-screen').style.display = 'none';
     document.getElementById('quiz-screen').style.display = 'block';
     document.getElementById('quiz-title').innerText = `Section ${sectionNumber}`;
     document.getElementById('back-menu-btn').style.display = 'none';
     document.getElementById('options').style.display = 'flex';
+    
+    document.getElementById('correction-container').style.display = 'none';
+    document.getElementById('correction-container').innerHTML = '';
 
     loadQuestion();
 }
 
 function loadQuestion() {
     const q = activeSectionData[currentQuestion];
-    document.getElementById('indonesian').innerText = `${currentQuestion + 1}. ${q.id}`;
+    document.getElementById('indonesian').innerHTML = `<span>Soal ${currentQuestion + 1}/7:</span><br>${q.id}`;
 
-    // Ambil opsi jawaban: 1 benar, 3 salah (diambil acak dari SELURUH quizData)
     let options = [q.en];
     while(options.length < 4) {
         let randomOption = quizData[Math.floor(Math.random() * quizData.length)].en;
@@ -274,8 +309,6 @@ function loadQuestion() {
             options.push(randomOption);
         }
     }
-    
-    // Acak posisi pilihan ganda
     options = shuffle(options);
 
     const optionsContainer = document.getElementById('options');
@@ -285,7 +318,7 @@ function loadQuestion() {
         const btn = document.createElement('button');
         btn.className = 'btn-option';
         btn.innerText = opt;
-        btn.onclick = () => checkAnswer(btn, opt, q.en);
+        btn.onclick = () => checkAnswer(btn, opt, q.en, q.id); 
         optionsContainer.appendChild(btn);
     });
 
@@ -293,9 +326,8 @@ function loadQuestion() {
     document.getElementById('score').innerText = `Skor: ${score} / 7`;
 }
 
-function checkAnswer(selectedBtn, selectedOpt, correctOpt) {
+function checkAnswer(selectedBtn, selectedOpt, correctOpt, questionId) {
     const buttons = document.querySelectorAll('.btn-option');
-    // Matikan semua tombol setelah memilih
     buttons.forEach(btn => btn.disabled = true);
 
     if (selectedOpt === correctOpt) {
@@ -303,15 +335,18 @@ function checkAnswer(selectedBtn, selectedOpt, correctOpt) {
         score++;
     } else {
         selectedBtn.classList.add('wrong');
-        // Tunjukkan jawaban yang benar
         buttons.forEach(btn => {
             if(btn.innerText === correctOpt) btn.classList.add('correct');
+        });
+        
+        mistakes.push({
+            question: questionId,
+            wrongAns: selectedOpt,
+            correctAns: correctOpt
         });
     }
 
     document.getElementById('score').innerText = `Skor: ${score} / 7`;
-    
-    // Tampilkan tombol "Soal Berikutnya"
     document.getElementById('next-btn').style.display = 'block';
 }
 
@@ -320,13 +355,29 @@ function nextQuestion() {
     if (currentQuestion < activeSectionData.length) {
         loadQuestion();
     } else {
-        // Section Selesai
-        document.getElementById('indonesian').innerHTML = `🎉 Selesai!<br>Skor Akhir Kamu: ${score} / 7`;
+        let wrongCount = mistakes.length;
+        document.getElementById('indonesian').innerHTML = `🎉 Selesai!<br>Benar: <span style="color: #22c55e;">${score}</span> | Salah: <span style="color: #ef4444;">${wrongCount}</span>`;
+        
         document.getElementById('options').style.display = 'none';
         document.getElementById('next-btn').style.display = 'none';
-        document.getElementById('score').innerText = ''; // Sembunyikan skor bawah karena sudah dipindah ke tengah
+        document.getElementById('score').innerText = ''; 
         
-        // Tampilkan tombol kembali ke menu
+        if (wrongCount > 0) {
+            let corrHTML = '<h4>Koreksi Jawaban:</h4>';
+            mistakes.forEach((m, index) => {
+                corrHTML += `
+                <div class="correction-item">
+                    <div class="corr-q">${index + 1}. ${m.question}</div>
+                    <div class="corr-w">❌ Jawabanmu: ${m.wrongAns}</div>
+                    <div class="corr-c">✅ Seharusnya: ${m.correctAns}</div>
+                </div>`;
+            });
+            
+            const corrContainer = document.getElementById('correction-container');
+            corrContainer.innerHTML = corrHTML;
+            corrContainer.style.display = 'block'; 
+        }
+
         document.getElementById('back-menu-btn').style.display = 'block';
     }
 }
