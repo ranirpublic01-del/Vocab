@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan Bahasa Inggris (Hal 41-45)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .quiz-crd {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        .indonesian-text {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+           gap: 10px;
+        }
+        .btn-option {
+            background-color: #eef2f7;
+            border: 2px solid #cbd5e1;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        .btn-option:hover {
+            background-color: #e2e8f0;
+        }
+        .correct {
+            background-color: #4ade80 !important;
+            border-color: #22c55e !important;
+           color: #ffffff;
+        }
+        .wrong {
+            background-color: #f87171 !important;
+            border-color: #ef4444 !important;
+            color: #ffffff;
+        }
+        .score-board {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+        .btn-next {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6x;
+            cursor: pointer;
+            display: none;
+            width: 100%;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-card">
+    <h3>Pilih Bahasa Inggris yang Tepat</h3>
+    <div id="indonesian" class="indonesian-text">Loading...</div>
+    <div id="options" class="options-container"></div>
+    <button id="next-btn" class="btn-next" onclick="nextQuestion()">Soal Berikutnya</button>
+    <div id="score" class="score-board">Skor: 0</div>
+</div>
+
+<script>
+cont quizData = [
+    // Halaman 41
+    { id: "Udah sarapan?", en: "You got your breakfast?" },
+    { id: "Udah sarapan?", en: "Have you got your breakfast?" },
+    { id: "Menu apa buat sarapan?", en: "What's for breakfast?" },
+    { id: "Aku lapar. (starving)", en: "I'm starving." },
+    { id: "Aku lapar. (hungry)", en: "I'm hungry." },
+    { id: "Perutku keroncongan.", en: "My stomach is growling." },
+    { id: "Nyari makan yuk.", en: "Let's get something to eat." },
+    { id: "Mau makan siang apa?", en:"What do you want for lunch?" },
+    { id: "Selera makan ku hilang.", en: "I lost my appetite." },
+    { id: "Kayanya aku mau muntah.", en: "I'm feeling like I wanna throw up." },
+    { id: "Mungkin kamu masuk angin.", en: "Maybe you catch a cold." },
+    { id: "Kamu masak apa?", en: "What are you cooking?" },
+    { id: "Baunya bikin ngiler.", en: "The smell makes me water my mouth." },
+
+    // Halaman 42
+    { id: "Aku ga suka masak.", en: "I don't like cooking." },
+    { id: "Aku tukang masak yang buru.", en: "I'm a bad cook." },
+    { id: "Terlalu asin/ keasinan.", en: "It's too salty." },
+    { id: "Kamu harus tambahin gula lagi.", en: "You need to add some more sugar." },
+    { id: "Aku suka makanan cepat saji.", en: "I like fast food." },
+    { id: "Cafe di ujung jalan sana payah.", en: "The cafe in the corner is terrible." },
+    { id: "Itu rumah makan prasmanan?", en: "Is it a buffet restaurant?" },
+    { id: "Itu rumah makan *a la carte.", en: "It's an ala carte restaurant." },
+    { id: "Pelaanannya bagus tapi measakannya payah.", en: "The service is good, but the cook sucks." },
+    { id: "Bisa beliin makan siang ga?", en: "Can you buy me my lunch?" },
+    { id: "Bisa nitip makanan ga?", en: "Can you get me something to eat?" },
+    { id: "Kamu keliatan capek. Mau ngopi sama aku?", en: "You look tired. Would you like to have a cup of coffee with me ?" },
+
+    // Halaman 43
+    { id: "Aku traktir.", en: "It's my treat." },
+    { id: "Emang sekarang aku butuh cafein.", en: "Caffeine is exactl what I need right now." },
+    { id: "Cuci tanganmu dulu sebelum makan.", en: "Wash your hands before eating." },
+    { id: "Aku ga suka makan pake sendok.", en: "I don't like to eat with spoon." },
+    { id: "Jangan ngecap.", en: "Don't smack your lips." },
+    { id: "Ada sesuatu di gigi kamu.", en: "You got something on your tooth." },
+    { id: "Jangan bersihin gigi di depan umum.", en: "Don't pick your tooth in public." },
+    { id: "Kamu makannya banyak.", en: "You eat like a horse." },
+    { id: Kamu makannya sedikit.", en: "You eat like a bird." },
+    { id: "Saya vegetarian.", en: "I am a vegan." },
+    { id: "Saya gak makan daging.", en: "I don't eat meat." },
+    { id: "Saya gak suka daging.", en: "I don't like meat." },
+    { id: "Saya gak suka ikan.", en: "I hate fish." },
+
+    // Halaman 44
+    { id: "Aku gak suka ikan karna bau amis.", en: "I don't like fish because it's fishy." },
+    { id: "Saya lebih suka beli makanan dari pada masak.", en: "I'd rather buy food than cook." },
+    { id "Saya benar-benar suka makanan pedas.", en: "I love spicy food like crazy." },
+    { id: "Terlalu banyak makan nasi gak baik buat kesehatan kamu.", en: "Eating too much rice is not good for your health." },
+    { id: "Mau nyobain?", en: "Have a bite?" },
+    { id: "Tambah lagi!", en: "Have some more!" },
+    { id: "Rasanya enak.", en: "The taste is good." },
+    { id: "Ini terlalu matang.", en: "It's overcooked." },
+    { id: "Ini kembaliannya.", en: "Here is your change." },
+    { id: "Punya uang pecaan kecil?", en: "Do you have a small change?" },
+    { id: "Bisa nukar uang 50 ribu?", en: "Could you break a Rp. 50.000 (50's) for me?" },
+    { id: "Ok. Mau pecahan berapa?", en: "Sure. How do you want it?" },
+    { id: "20 ribuan 2 dan sisanya 10 ribu?", en: "Could I have two 20's and the rest in ten?" },
+
+    // Halaman 45
+    { id: "Maaf, kayanya uang kembaliannya keliru.", en: "Excuse me, I think you've given me the wrong change." },
+    { id: "Bau nya enak.", en: "The smell is good." },
+    { id: Aku nyium bau gosong.", en: "I smell something burning." },
+    { id: "Ya ampun! Aku lupa matiin kompor.", en: "OMG! I forgot to turn off the stove." },
+    { id: "Rasanya basi!", en: "It tastes stale!" }
+];
+
+let currentQuestion = 0;
+let score = 0;
+
+function shuffle(array) {
+    return array.sort(() => Math.random() - 0.5);
+}
+
+function loadQuestion() {
+    const q = quizData[currentQuestion];
+    document.getElementById('indonesian').innerText = q.id;
+    
+    // Ambil opsi acak dari seluruh dataset
+   let options = [q.en];
+    while(options.length < 4) {
+        let randomOption = quizData[Math.floor(Math.random() * quizData.length)].en;
+        if(!options.includes(randomOption)) {
+            options.push(randomOption);
+        }
+    }
+    options = shuffle(options);
+
+    const optionsContainer = document.getElementById('options');
+    optionsContainer.innerHTML = '';
+    
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-option';
+       btn.innerText = opt;
+        btn.onclick = () => checkAnswer(btn, opt, q.en);
+        optionsContainer.appendChild(btn);
+    });
+
+    document.getElementById('next-btn').style.display = 'none';
+}
+
+function checkAnswer(selectedBtn, selectedOpt, correctOpt) {
+    const buttons = document.querySelectorAll('.btn-option');
+    buttons.forEach(btn => btn.disabled = true);
+
+    if (selectedOpt === correctOpt) {
+        selectedBtn.classList.add('correct');
+        score++;
+    } else {
+        selectedBtn.clasList.add('wrong');
+        buttons.forEach(btn => {
+            if(btn.innerText === correctOpt) btn.classList.add('correct');
+        });
+    }
+
+    document.getElementById('score').innerText = `Skor: ${score} / ${quizData.length}`;
+    document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextQuestion() {
+    currentQuestion++;
+    if (currentQuestion < quizData.length) {
+        loadQuestion();
+    } else {
+        document.getElementById('indonesian').innerText = "Selesai! Kamu telh menyelesaikan semua soal.";
+        document.getElementById('options').innerHTML = '';
+        document.getElementById('next-btn').style.display = 'none';
+    }
+}
+
+// Mulai kuis
+shuffle(quizData);
+loadQuestion();
+</script>
+
+</body>
+</html>
