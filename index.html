@@ -15,20 +15,53 @@
             margin: 0;
             padding: 20px;
         }
-        .quiz-card { /* Diperbaiki dari .quiz-crd */
+        .quiz-card {
             background: #ffffff;
-            padding: 25px;
+            padding: 30px 25px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             max-width: 500px;
             width: 100%;
             text-align: center;
         }
+        
+        /* --- Menu Section Styles --- */
+        .section-title {
+            color: #2c3e50;
+            margin-bottom: 25px;
+        }
+        .section-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .btn-section {
+            background-color: #f8fafc;
+            border: 2px solid #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-section:hover {
+            background-color: #e2e8f0;
+            border-color: #cbd5e1;
+            transform: translateY(-2px);
+        }
+
+        /* --- Quiz Styles --- */
         .indonesian-text {
             font-size: 1.3rem;
             font-weight: bold;
             color: #2c3e50;
             margin-bottom: 20px;
+            min-height: 60px; /* Menjaga layout tidak lompat */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .options-container {
             display: flex;
@@ -59,36 +92,67 @@
             color: #ffffff;
         }
         .score-board {
-            margin-top: 15px;
-            font-size: 0.9rem;
+            margin-top: 20px;
+            font-size: 1rem;
+            font-weight: bold;
             color: #64748b;
         }
-        .btn-next {
+        .btn-action {
             margin-top: 20px;
-            padding: 10px 20px;
+            padding: 12px 20px;
             background-color: #2563eb;
             color: white;
             border: none;
-            border-radius: 6px; /* Diperbaiki dari 6x */
+            border-radius: 8px;
             cursor: pointer;
             display: none;
             width: 100%;
             font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        .btn-action:hover {
+            background-color: #1d4ed8;
+        }
+        .btn-menu {
+            background-color: #475569;
+        }
+        .btn-menu:hover {
+            background-color: #334155;
         }
     </style>
 </head>
 <body>
 
-<div class="quiz-card">
-    <h3>Pilih Bahasa Inggris yang Tepat</h3>
+<!-- Layar Utama (Menu) -->
+<div id="menu-screen" class="quiz-card">
+    <h2 class="section-title">Pilih Bagian Latihan</h2>
+    <div class="section-grid">
+        <button class="btn-section" onclick="startSection(1)">Section 1</button>
+        <button class="btn-section" onclick="startSection(2)">Section 2</button>
+        <button class="btn-section" onclick="startSection(3)">Section 3</button>
+        <button class="btn-section" onclick="startSection(4)">Section 4</button>
+        <button class="btn-section" onclick="startSection(5)">Section 5</button>
+        <button class="btn-section" onclick="startSection(6)">Section 6</button>
+        <button class="btn-section" onclick="startSection(7)">Section 7</button>
+        <button class="btn-section" onclick="startSection(8)">Section 8</button>
+    </div>
+</div>
+
+<!-- Layar Kuis -->
+<div id="quiz-screen" class="quiz-card" style="display: none;">
+    <h3 id="quiz-title">Latihan Bahasa Inggris</h3>
     <div id="indonesian" class="indonesian-text">Loading...</div>
     <div id="options" class="options-container"></div>
-    <button id="next-btn" class="btn-next" onclick="nextQuestion()">Soal Berikutnya</button>
+    
+    <button id="next-btn" class="btn-action" onclick="nextQuestion()">Soal Berikutnya</button>
+    <button id="back-menu-btn" class="btn-action btn-menu" onclick="backToMenu()">Kembali ke Menu</button>
+    
     <div id="score" class="score-board">Skor: 0</div>
 </div>
 
 <script>
-// Diperbaiki dari 'cont' menjadi 'const'
+// Total 56 Soal (8 Section x 7 Soal)
 const quizData = [
     // Halaman 41
     { id: "Udah sarapan?", en: "You got your breakfast?" },
@@ -107,28 +171,28 @@ const quizData = [
 
     // Halaman 42
     { id: "Aku ga suka masak.", en: "I don't like cooking." },
-    { id: "Aku tukang masak yang buru.", en: "I'm a bad cook." },
+    { id: "Aku tukang masak yang buruk.", en: "I'm a bad cook." }, // Diperbaiki dari 'buru'
     { id: "Terlalu asin/ keasinan.", en: "It's too salty." },
     { id: "Kamu harus tambahin gula lagi.", en: "You need to add some more sugar." },
     { id: "Aku suka makanan cepat saji.", en: "I like fast food." },
     { id: "Cafe di ujung jalan sana payah.", en: "The cafe in the corner is terrible." },
     { id: "Itu rumah makan prasmanan?", en: "Is it a buffet restaurant?" },
     { id: "Itu rumah makan *a la carte.", en: "It's an ala carte restaurant." },
-    { id: "Pelaanannya bagus tapi measakannya payah.", en: "The service is good, but the cook sucks." },
+    { id: "Pelayanannya bagus tapi masakannya payah.", en: "The service is good, but the cook sucks." }, // Diperbaiki typo
     { id: "Bisa beliin makan siang ga?", en: "Can you buy me my lunch?" },
     { id: "Bisa nitip makanan ga?", en: "Can you get me something to eat?" },
     { id: "Kamu keliatan capek. Mau ngopi sama aku?", en: "You look tired. Would you like to have a cup of coffee with me ?" },
 
     // Halaman 43
     { id: "Aku traktir.", en: "It's my treat." },
-    { id: "Emang sekarang aku butuh cafein.", en: "Caffeine is exactl what I need right now." },
+    { id: "Emang sekarang aku butuh cafein.", en: "Caffeine is exactly what I need right now." }, // Diperbaiki typo
     { id: "Cuci tanganmu dulu sebelum makan.", en: "Wash your hands before eating." },
     { id: "Aku ga suka makan pake sendok.", en: "I don't like to eat with spoon." },
     { id: "Jangan ngecap.", en: "Don't smack your lips." },
     { id: "Ada sesuatu di gigi kamu.", en: "You got something on your tooth." },
     { id: "Jangan bersihin gigi di depan umum.", en: "Don't pick your tooth in public." },
     { id: "Kamu makannya banyak.", en: "You eat like a horse." },
-    { id: "Kamu makannya sedikit.", en: "You eat like a bird." }, // Diperbaiki kutip yang hilang
+    { id: "Kamu makannya sedikit.", en: "You eat like a bird." },
     { id: "Saya vegetarian.", en: "I am a vegan." },
     { id: "Saya gak makan daging.", en: "I don't eat meat." },
     { id: "Saya gak suka daging.", en: "I don't like meat." },
@@ -137,7 +201,7 @@ const quizData = [
     // Halaman 44
     { id: "Aku gak suka ikan karna bau amis.", en: "I don't like fish because it's fishy." },
     { id: "Saya lebih suka beli makanan dari pada masak.", en: "I'd rather buy food than cook." },
-    { id: "Saya benar-benar suka makanan pedas.", en: "I love spicy food like crazy." }, // Diperbaiki titik dua yang hilang
+    { id: "Saya benar-benar suka makanan pedas.", en: "I love spicy food like crazy." },
     { id: "Terlalu banyak makan nasi gak baik buat kesehatan kamu.", en: "Eating too much rice is not good for your health." },
     { id: "Mau nyobain?", en: "Have a bite?" },
     { id: "Tambah lagi!", en: "Have some more!" },
@@ -152,23 +216,57 @@ const quizData = [
     // Halaman 45
     { id: "Maaf, kayanya uang kembaliannya keliru.", en: "Excuse me, I think you've given me the wrong change." },
     { id: "Bau nya enak.", en: "The smell is good." },
-    { id: "Aku nyium bau gosong.", en: "I smell something burning." }, // Diperbaiki kutip yang hilang
+    { id: "Aku nyium bau gosong.", en: "I smell something burning." },
     { id: "Ya ampun! Aku lupa matiin kompor.", en: "OMG! I forgot to turn off the stove." },
     { id: "Rasanya basi!", en: "It tastes stale!" }
 ];
 
+let activeSectionData = [];
 let currentQuestion = 0;
 let score = 0;
 
+// Fungsi untuk mengacak array
 function shuffle(array) {
     return array.sort(() => Math.random() - 0.5);
 }
 
-function loadQuestion() {
-    const q = quizData[currentQuestion];
-    document.getElementById('indonesian').innerText = q.id;
+// Fungsi kembali ke menu
+function backToMenu() {
+    document.getElementById('quiz-screen').style.display = 'none';
+    document.getElementById('menu-screen').style.display = 'block';
+}
 
-    // Ambil opsi acak dari seluruh dataset
+// Fungsi memulai section
+function startSection(sectionNumber) {
+    // Menghitung index awal dan akhir berdasarkan nomor section (7 soal per section)
+    const startIndex = (sectionNumber - 1) * 7;
+    const endIndex = startIndex + 7;
+    
+    // Mengambil 7 soal untuk section ini
+    activeSectionData = quizData.slice(startIndex, endIndex);
+    
+    // Acak urutan 7 soal tersebut agar tidak berurutan terus
+    activeSectionData = shuffle(activeSectionData); 
+
+    // Reset variabel
+    currentQuestion = 0;
+    score = 0;
+
+    // Ubah tampilan
+    document.getElementById('menu-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
+    document.getElementById('quiz-title').innerText = `Section ${sectionNumber}`;
+    document.getElementById('back-menu-btn').style.display = 'none';
+    document.getElementById('options').style.display = 'flex';
+
+    loadQuestion();
+}
+
+function loadQuestion() {
+    const q = activeSectionData[currentQuestion];
+    document.getElementById('indonesian').innerText = `${currentQuestion + 1}. ${q.id}`;
+
+    // Ambil opsi jawaban: 1 benar, 3 salah (diambil acak dari SELURUH quizData)
     let options = [q.en];
     while(options.length < 4) {
         let randomOption = quizData[Math.floor(Math.random() * quizData.length)].en;
@@ -176,6 +274,8 @@ function loadQuestion() {
             options.push(randomOption);
         }
     }
+    
+    // Acak posisi pilihan ganda
     options = shuffle(options);
 
     const optionsContainer = document.getElementById('options');
@@ -190,40 +290,46 @@ function loadQuestion() {
     });
 
     document.getElementById('next-btn').style.display = 'none';
+    document.getElementById('score').innerText = `Skor: ${score} / 7`;
 }
 
 function checkAnswer(selectedBtn, selectedOpt, correctOpt) {
     const buttons = document.querySelectorAll('.btn-option');
+    // Matikan semua tombol setelah memilih
     buttons.forEach(btn => btn.disabled = true);
 
     if (selectedOpt === correctOpt) {
         selectedBtn.classList.add('correct');
         score++;
     } else {
-        selectedBtn.classList.add('wrong'); // Diperbaiki dari clasList menjadi classList
+        selectedBtn.classList.add('wrong');
+        // Tunjukkan jawaban yang benar
         buttons.forEach(btn => {
             if(btn.innerText === correctOpt) btn.classList.add('correct');
         });
     }
 
-    document.getElementById('score').innerText = `Skor: ${score} / ${quizData.length}`;
+    document.getElementById('score').innerText = `Skor: ${score} / 7`;
+    
+    // Tampilkan tombol "Soal Berikutnya"
     document.getElementById('next-btn').style.display = 'block';
 }
 
 function nextQuestion() {
     currentQuestion++;
-    if (currentQuestion < quizData.length) {
+    if (currentQuestion < activeSectionData.length) {
         loadQuestion();
     } else {
-        document.getElementById('indonesian').innerText = "Selesai! Kamu telah menyelesaikan semua soal."; // Diperbaiki typo 'telh'
-        document.getElementById('options').innerHTML = '';
+        // Section Selesai
+        document.getElementById('indonesian').innerHTML = `🎉 Selesai!<br>Skor Akhir Kamu: ${score} / 7`;
+        document.getElementById('options').style.display = 'none';
         document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('score').innerText = ''; // Sembunyikan skor bawah karena sudah dipindah ke tengah
+        
+        // Tampilkan tombol kembali ke menu
+        document.getElementById('back-menu-btn').style.display = 'block';
     }
 }
-
-// Mulai kuis
-shuffle(quizData);
-loadQuestion();
 </script>
 
 </body>
