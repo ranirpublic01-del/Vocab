@@ -300,7 +300,9 @@ function startSection(sectionNumber) {
 
 function loadQuestion() {
     const q = activeSectionData[currentQuestion];
-    document.getElementById('indonesian').innerHTML = `<span>Soal ${currentQuestion + 1}/7:</span><br>${q.id}`;
+    
+    // Ubah baris ini agar hanya menampilkan angka saja
+    document.getElementById('indonesian').innerHTML = `${currentQuestion + 1}. ${q.id}`;
 
     let options = [q.en];
     while(options.length < 4) {
