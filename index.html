@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Latihan Susun Kata (Hal 41-45)</title>
+    <title>Latihan Bahasa Inggris (Hal 41-45)</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -43,22 +43,35 @@
         }
 
         /* --- Menu Section Styles --- */
-        .section-title {
-            color: #2c3e50;
+        .main-title {
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+        .sub-title {
+            color: #64748b;
+            font-size: 0.95rem;
             margin-bottom: 25px;
-            margin-top: 10px;
+        }
+        .menu-block-title {
+            font-size: 1rem;
+            color: #334155;
+            text-align: left;
+            margin: 15px 0 10px 0;
+            font-weight: bold;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 5px;
         }
         .section-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 10px;
         }
         .btn-section {
             background-color: #f8fafc;
             border: 2px solid #e2e8f0;
-            padding: 15px;
+            padding: 12px;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: bold;
             color: #334155;
             cursor: pointer;
@@ -67,6 +80,23 @@
         .btn-section:hover {
             background-color: #e2e8f0;
             border-color: #cbd5e1;
+            transform: translateY(-2px);
+        }
+        .btn-vocab-mode {
+            width: 100%;
+            background-color: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(139, 92, 246, 0.2);
+        }
+        .btn-vocab-mode:hover {
+            background-color: #7c3aed;
             transform: translateY(-2px);
         }
 
@@ -137,6 +167,40 @@
             opacity: 0.6;
         }
 
+        /* Mode Vocab Options */
+        .vocab-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .btn-vocab-opt {
+            background-color: #f8fafc;
+            border: 2px solid #cbd5e1;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        .btn-vocab-opt:hover {
+            background-color: #e2e8f0;
+        }
+
+        .correct {
+            background-color: #4ade80 !important;
+            border-color: #22c55e !important;
+            color: #ffffff !important;
+        }
+        .wrong {
+            background-color: #f87171 !important;
+            border-color: #ef4444 !important;
+            color: #ffffff !important;
+        }
+
         /* Feedback Pesan */
         .feedback-msg {
             margin-bottom: 15px;
@@ -203,7 +267,13 @@
 
 <!-- Layar Utama (Menu) -->
 <div id="menu-screen" class="quiz-card">
-    <h2 class="section-title">Latihan Susun Kata</h2>
+    <h2 class="main-title">Aplikasi Latihan Inggris</h2>
+    <div class="sub-title">Pilih mode belajar yang kamu inginkan</div>
+    
+    <div class="menu-block-title">🎯 Mode Vocab Spesial</div>
+    <button class="btn-vocab-mode" onclick="startVocabMode()">🔥 Tebak Arti Vocab Spesial</button>
+
+    <div class="menu-block-title">🧩 Mode Susun Kata (Hal 41-45)</div>
     <div class="section-grid">
         <button class="btn-section" onclick="startSection(1)">Section 1</button>
         <button class="btn-section" onclick="startSection(2)">Section 2</button>
@@ -223,11 +293,12 @@
     <h3 id="quiz-title">Section 1</h3>
     <div id="indonesian" class="indonesian-text">Loading...</div>
     
-    <!-- Kotak Jawaban (Tempat Menyusun) -->
+    <!-- Elemen Mode Susun Kata -->
     <div id="answer-area" class="answer-area"></div>
-    
-    <!-- Kotak Kata Acak -->
     <div id="word-pool" class="word-pool"></div>
+
+    <!-- Elemen Mode Vocab -->
+    <div id="vocab-options" class="vocab-options" style="display: none;"></div>
     
     <div id="feedback-msg" class="feedback-msg"></div>
 
@@ -241,7 +312,7 @@
 </div>
 
 <script>
-// Array master (56 soal berurut)
+// Master Data Soal Susun Kata (56 soal)
 const quizData = [
     // Halaman 41
     { id: "Udah sarapan?", en: "You got your breakfast?" },
@@ -310,14 +381,33 @@ const quizData = [
     { id: "Rasanya basi!", en: "It tastes stale!" }
 ];
 
-let activeSectionData = [];
+// Data Vocab Spesial (Hanya ungkapan/kata khusus pilihan)
+const specialVocabData = [
+    { word: "starving", meaning: "Sangat lapar / kelaparan" },
+    { word: "growling", meaning: "Keroncongan (suara perut)" },
+    { word: "appetite", meaning: "Selera makan" },
+    { word: "throw up", meaning: "Muntah" },
+    { word: "bad cook", meaning: "Koki/tukang masak yang buruk" },
+    { word: "a la carte", meaning: "Menu pesanan satuan (bukan paket/prasmanan)" },
+    { word: "my treat", meaning: "Aku yang traktir" },
+    { word: "smack lips", meaning: "Mengecap saat makan" },
+    { word: "eat like a horse", meaning: "Makannya sangat banyak" },
+    { word: "eat like a bird", meaning: "Makannya sangat sedikit" },
+    { word: "fishy", meaning: "Bau amis" },
+    { word: "overcooked", meaning: "Terlalu matang / kelewat matang" },
+    { word: "stale", meaning: "Basi / tidak segar lagi" },
+    { word: "small change", meaning: "Uang pecahan kecil / uang kembalian" },
+    { word: "catch a cold", meaning: "Masuk angin / kena flu" }
+];
+
+let mode = "sentence"; // 'sentence' atau 'vocab'
+let activeQuizData = [];
 let currentQuestion = 0;
 let score = 0;
 let mistakes = []; 
 let currentCorrectAnswer = "";
 let currentQuestionText = "";
 
-// Fungsi untuk mengacak array
 function shuffle(array) {
     return array.sort(() => Math.random() - 0.5);
 }
@@ -327,27 +417,35 @@ function backToMenu() {
     document.getElementById('menu-screen').style.display = 'block';
 }
 
+// --- START MODE SUSUN KATA ---
 function startSection(sectionNumber) {
+    mode = "sentence";
     const startIndex = (sectionNumber - 1) * 7;
     const endIndex = startIndex + 7;
     
-    // Potong 7 soal berurutan, lalu acak
-    activeSectionData = quizData.slice(startIndex, endIndex);
-    activeSectionData = shuffle(activeSectionData); 
+    activeQuizData = quizData.slice(startIndex, endIndex);
+    activeQuizData = shuffle(activeQuizData); 
 
+    initQuizScreen(`Section ${sectionNumber}`);
+}
+
+// --- START MODE VOCAB SPESIAL ---
+function startVocabMode() {
+    mode = "vocab";
+    activeQuizData = shuffle([...specialVocabData]).slice(0, 10); // Ambil 10 vocab acak
+    initQuizScreen("🔥 Vocab Spesial");
+}
+
+function initQuizScreen(title) {
     currentQuestion = 0;
     score = 0;
     mistakes = []; 
 
     document.getElementById('menu-screen').style.display = 'none';
     document.getElementById('quiz-screen').style.display = 'block';
-    document.getElementById('quiz-title').innerText = `Section ${sectionNumber}`;
+    document.getElementById('quiz-title').innerText = title;
     document.getElementById('back-menu-btn').style.display = 'none';
-    
-    document.getElementById('answer-area').style.display = 'flex';
-    document.getElementById('word-pool').style.display = 'flex';
     document.getElementById('score').style.display = 'block';
-    
     document.getElementById('correction-container').style.display = 'none';
     document.getElementById('correction-container').innerHTML = '';
 
@@ -355,16 +453,28 @@ function startSection(sectionNumber) {
 }
 
 function loadQuestion() {
-    const q = activeSectionData[currentQuestion];
+    document.getElementById('feedback-msg').innerHTML = '';
     
-    // Pembersihan string: huruf kecil & buang tanda baca
+    if (mode === "sentence") {
+        loadSentenceQuestion();
+    } else {
+        loadVocabQuestion();
+    }
+}
+
+// Latihan Susun Kata
+function loadSentenceQuestion() {
+    document.getElementById('answer-area').style.display = 'flex';
+    document.getElementById('word-pool').style.display = 'flex';
+    document.getElementById('vocab-options').style.display = 'none';
+
+    const q = activeQuizData[currentQuestion];
     let cleanedString = q.en.replace(/[.,?!*()]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
     
     currentCorrectAnswer = cleanedString;
     currentQuestionText = q.id;
     
     document.getElementById('indonesian').innerHTML = `${currentQuestion + 1}. ${q.id}`;
-    document.getElementById('feedback-msg').innerHTML = '';
     
     const answerArea = document.getElementById('answer-area');
     const wordPool = document.getElementById('word-pool');
@@ -373,33 +483,22 @@ function loadQuestion() {
     wordPool.innerHTML = '';
     answerArea.className = 'answer-area'; 
     
-    // Pecah kalimat yang sudah bersih menjadi kata-kata (KATA BENAR)
     let correctWords = currentCorrectAnswer.split(' ');
 
-    // --- SISTEM PENGHIMPUN KATA PENGЕСOH (DECOYS) ---
+    // Ambik Kata Pengecoh
     let decoyWords = [];
-    
-    // Kumpulkan kata dari soal lain di seluruh quizData
     quizData.forEach(item => {
         if (item.en !== q.en) {
             let cleanItem = item.en.replace(/[.,?!*()]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
             decoyWords.push(...cleanItem.split(' '));
         }
     });
-    
-    // Hapus duplikat dan buang kata yang sudah ada di jawaban benar
     decoyWords = [...new Set(decoyWords)].filter(w => !correctWords.includes(w) && w.length > 0);
-    
-    // Acak daftar kata pengecoh dan ambil 3 kata saja
     decoyWords = shuffle(decoyWords);
-    let selectedDecoys = decoyWords.slice(0, 5);
+    let selectedDecoys = decoyWords.slice(0, 3);
     
-    // Gabungkan kata benar + kata pengecoh, lalu acak semuanya
-    let finalWords = correctWords.concat(selectedDecoys);
-    finalWords = shuffle(finalWords);
-    // ------------------------------------------------
+    let finalWords = shuffle(correctWords.concat(selectedDecoys));
 
-    // Buat kartu untuk setiap kata
     finalWords.forEach(w => {
         const wordBtn = document.createElement('div');
         wordBtn.className = 'word-card';
@@ -410,18 +509,55 @@ function loadQuestion() {
 
     document.getElementById('check-btn').style.display = 'block';
     document.getElementById('next-btn').style.display = 'none';
-    document.getElementById('score').innerText = `Skor: ${score} / 7`;
+    document.getElementById('score').innerText = `Skor: ${score} / ${activeQuizData.length}`;
 }
 
-// Logika memindah kata antar kotak
+// Latihan Vocab Spesial
+function loadVocabQuestion() {
+    document.getElementById('answer-area').style.display = 'none';
+    document.getElementById('word-pool').style.display = 'none';
+    document.getElementById('check-btn').style.display = 'none';
+    
+    const vocabContainer = document.getElementById('vocab-options');
+    vocabContainer.style.display = 'flex';
+    vocabContainer.innerHTML = '';
+
+    const q = activeQuizData[currentQuestion];
+    currentCorrectAnswer = q.meaning;
+    currentQuestionText = q.word;
+
+    document.getElementById('indonesian').innerHTML = `${currentQuestion + 1}. Apa arti dari <u>"${q.word}"</u>?`;
+
+    // Ambil 3 pilihan salah dari daftar vocab lainnya
+    let options = [q.meaning];
+    while(options.length < 4) {
+        let randMeaning = specialVocabData[Math.floor(Math.random() * specialVocabData.length)].meaning;
+        if (!options.includes(randMeaning)) {
+            options.push(randMeaning);
+        }
+    }
+    options = shuffle(options);
+
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-vocab-opt';
+        btn.innerText = opt;
+        btn.onclick = () => checkVocabAnswer(btn, opt);
+        vocabContainer.appendChild(btn);
+    });
+
+    document.getElementById('next-btn').style.display = 'none';
+    document.getElementById('score').innerText = `Skor: ${score} / ${activeQuizData.length}`;
+}
+
 function moveWord(wordElement) {
     const wordPool = document.getElementById('word-pool');
     const answerArea = document.getElementById('answer-area');
     
     if (wordElement.parentElement === wordPool) {
-        answerArea.appendChild(wordElement); // Pindah ke atas
+        answerArea.appendChild(wordElement);
     } else {
-        wordPool.appendChild(wordElement); // Pindah ke bawah
+        wordPool.appendChild(wordElement);
     }
 }
 
@@ -429,11 +565,9 @@ function checkAnswer() {
     const answerArea = document.getElementById('answer-area');
     const feedback = document.getElementById('feedback-msg');
     
-    // Gabungkan kata-kata di area jawaban menjadi 1 kalimat
     const userWords = Array.from(answerArea.children).map(card => card.innerText);
     const userAnswer = userWords.join(' ');
     
-    // Matikan klik agar tidak bisa digeser lagi setelah dicek
     const allCards = document.querySelectorAll('.word-card');
     allCards.forEach(card => card.classList.add('disabled'));
     
@@ -454,12 +588,40 @@ function checkAnswer() {
 
     document.getElementById('check-btn').style.display = 'none';
     document.getElementById('next-btn').style.display = 'block';
-    document.getElementById('score').innerText = `Skor: ${score} / 7`;
+    document.getElementById('score').innerText = `Skor: ${score} / ${activeQuizData.length}`;
+}
+
+function checkVocabAnswer(selectedBtn, selectedOpt) {
+    const buttons = document.querySelectorAll('.btn-vocab-opt');
+    buttons.forEach(btn => btn.disabled = true);
+
+    const feedback = document.getElementById('feedback-msg');
+
+    if (selectedOpt === currentCorrectAnswer) {
+        selectedBtn.classList.add('correct');
+        feedback.innerHTML = '<span style="color: #22c55e;">✅ Benar Sekali!</span>';
+        score++;
+    } else {
+        selectedBtn.classList.add('wrong');
+        feedback.innerHTML = `<span style="color: #ef4444;">❌ Kurang Tepat.</span>`;
+        buttons.forEach(btn => {
+            if(btn.innerText === currentCorrectAnswer) btn.classList.add('correct');
+        });
+
+        mistakes.push({
+            question: currentQuestionText,
+            wrongAns: selectedOpt,
+            correctAns: currentCorrectAnswer
+        });
+    }
+
+    document.getElementById('next-btn').style.display = 'block';
+    document.getElementById('score').innerText = `Skor: ${score} / ${activeQuizData.length}`;
 }
 
 function nextQuestion() {
     currentQuestion++;
-    if (currentQuestion < activeSectionData.length) {
+    if (currentQuestion < activeQuizData.length) {
         loadQuestion();
     } else {
         let wrongCount = mistakes.length;
@@ -467,6 +629,7 @@ function nextQuestion() {
         
         document.getElementById('answer-area').style.display = 'none';
         document.getElementById('word-pool').style.display = 'none';
+        document.getElementById('vocab-options').style.display = 'none';
         document.getElementById('check-btn').style.display = 'none';
         document.getElementById('next-btn').style.display = 'none';
         document.getElementById('feedback-msg').innerHTML = '';
