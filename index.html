@@ -15,7 +15,7 @@
             margin: 0;
             padding: 20px;
         }
-        .quiz-crd {
+        .quiz-card { /* Diperbaiki dari .quiz-crd */
             background: #ffffff;
             padding: 25px;
             border-radius: 12px;
@@ -33,7 +33,7 @@
         .options-container {
             display: flex;
             flex-direction: column;
-           gap: 10px;
+            gap: 10px;
         }
         .btn-option {
             background-color: #eef2f7;
@@ -51,7 +51,7 @@
         .correct {
             background-color: #4ade80 !important;
             border-color: #22c55e !important;
-           color: #ffffff;
+            color: #ffffff;
         }
         .wrong {
             background-color: #f87171 !important;
@@ -69,7 +69,7 @@
             background-color: #2563eb;
             color: white;
             border: none;
-            border-radius: 6x;
+            border-radius: 6px; /* Diperbaiki dari 6x */
             cursor: pointer;
             display: none;
             width: 100%;
@@ -88,7 +88,8 @@
 </div>
 
 <script>
-cont quizData = [
+// Diperbaiki dari 'cont' menjadi 'const'
+const quizData = [
     // Halaman 41
     { id: "Udah sarapan?", en: "You got your breakfast?" },
     { id: "Udah sarapan?", en: "Have you got your breakfast?" },
@@ -97,7 +98,7 @@ cont quizData = [
     { id: "Aku lapar. (hungry)", en: "I'm hungry." },
     { id: "Perutku keroncongan.", en: "My stomach is growling." },
     { id: "Nyari makan yuk.", en: "Let's get something to eat." },
-    { id: "Mau makan siang apa?", en:"What do you want for lunch?" },
+    { id: "Mau makan siang apa?", en: "What do you want for lunch?" },
     { id: "Selera makan ku hilang.", en: "I lost my appetite." },
     { id: "Kayanya aku mau muntah.", en: "I'm feeling like I wanna throw up." },
     { id: "Mungkin kamu masuk angin.", en: "Maybe you catch a cold." },
@@ -127,7 +128,7 @@ cont quizData = [
     { id: "Ada sesuatu di gigi kamu.", en: "You got something on your tooth." },
     { id: "Jangan bersihin gigi di depan umum.", en: "Don't pick your tooth in public." },
     { id: "Kamu makannya banyak.", en: "You eat like a horse." },
-    { id: Kamu makannya sedikit.", en: "You eat like a bird." },
+    { id: "Kamu makannya sedikit.", en: "You eat like a bird." }, // Diperbaiki kutip yang hilang
     { id: "Saya vegetarian.", en: "I am a vegan." },
     { id: "Saya gak makan daging.", en: "I don't eat meat." },
     { id: "Saya gak suka daging.", en: "I don't like meat." },
@@ -136,7 +137,7 @@ cont quizData = [
     // Halaman 44
     { id: "Aku gak suka ikan karna bau amis.", en: "I don't like fish because it's fishy." },
     { id: "Saya lebih suka beli makanan dari pada masak.", en: "I'd rather buy food than cook." },
-    { id "Saya benar-benar suka makanan pedas.", en: "I love spicy food like crazy." },
+    { id: "Saya benar-benar suka makanan pedas.", en: "I love spicy food like crazy." }, // Diperbaiki titik dua yang hilang
     { id: "Terlalu banyak makan nasi gak baik buat kesehatan kamu.", en: "Eating too much rice is not good for your health." },
     { id: "Mau nyobain?", en: "Have a bite?" },
     { id: "Tambah lagi!", en: "Have some more!" },
@@ -151,7 +152,7 @@ cont quizData = [
     // Halaman 45
     { id: "Maaf, kayanya uang kembaliannya keliru.", en: "Excuse me, I think you've given me the wrong change." },
     { id: "Bau nya enak.", en: "The smell is good." },
-    { id: Aku nyium bau gosong.", en: "I smell something burning." },
+    { id: "Aku nyium bau gosong.", en: "I smell something burning." }, // Diperbaiki kutip yang hilang
     { id: "Ya ampun! Aku lupa matiin kompor.", en: "OMG! I forgot to turn off the stove." },
     { id: "Rasanya basi!", en: "It tastes stale!" }
 ];
@@ -166,9 +167,9 @@ function shuffle(array) {
 function loadQuestion() {
     const q = quizData[currentQuestion];
     document.getElementById('indonesian').innerText = q.id;
-    
+
     // Ambil opsi acak dari seluruh dataset
-   let options = [q.en];
+    let options = [q.en];
     while(options.length < 4) {
         let randomOption = quizData[Math.floor(Math.random() * quizData.length)].en;
         if(!options.includes(randomOption)) {
@@ -179,11 +180,11 @@ function loadQuestion() {
 
     const optionsContainer = document.getElementById('options');
     optionsContainer.innerHTML = '';
-    
+
     options.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'btn-option';
-       btn.innerText = opt;
+        btn.innerText = opt;
         btn.onclick = () => checkAnswer(btn, opt, q.en);
         optionsContainer.appendChild(btn);
     });
@@ -199,7 +200,7 @@ function checkAnswer(selectedBtn, selectedOpt, correctOpt) {
         selectedBtn.classList.add('correct');
         score++;
     } else {
-        selectedBtn.clasList.add('wrong');
+        selectedBtn.classList.add('wrong'); // Diperbaiki dari clasList menjadi classList
         buttons.forEach(btn => {
             if(btn.innerText === correctOpt) btn.classList.add('correct');
         });
@@ -214,7 +215,7 @@ function nextQuestion() {
     if (currentQuestion < quizData.length) {
         loadQuestion();
     } else {
-        document.getElementById('indonesian').innerText = "Selesai! Kamu telh menyelesaikan semua soal.";
+        document.getElementById('indonesian').innerText = "Selesai! Kamu telah menyelesaikan semua soal."; // Diperbaiki typo 'telh'
         document.getElementById('options').innerHTML = '';
         document.getElementById('next-btn').style.display = 'none';
     }
