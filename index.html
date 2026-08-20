@@ -392,7 +392,7 @@ function loadQuestion() {
     
     // Acak daftar kata pengecoh dan ambil 3 kata saja
     decoyWords = shuffle(decoyWords);
-    let selectedDecoys = decoyWords.slice(0, 3);
+    let selectedDecoys = decoyWords.slice(0, 5);
     
     // Gabungkan kata benar + kata pengecoh, lalu acak semuanya
     let finalWords = correctWords.concat(selectedDecoys);
