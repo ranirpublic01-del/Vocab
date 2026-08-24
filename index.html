@@ -236,32 +236,36 @@
     <h2 class="main-title">Aplikasi Belajar Inggris</h2>
     <div class="sub-title">Pilih mode latihan kesukaanmu</div>
     
-    <div class="menu-block-title">🔥 Mode Vocab Spesial</div>
-    <button class="btn-vocab-mode" onclick="startVocabMode()">Tebak Arti Vocab Pilihan</button>
+    <div id="loading-msg" style="color: #2563eb; font-weight: bold; margin-bottom: 15px;">Loading data soal...</div>
+    
+    <div id="menu-content" style="display: none;">
+        <div class="menu-block-title">🔥 Mode Vocab Spesial</div>
+        <button class="btn-vocab-mode" onclick="startVocabMode()">Tebak Arti Vocab Pilihan</button>
 
-    <div class="menu-block-title">📖 Mode Latihan Grammar & Rules</div>
-    <div class="grammar-grid">
-        <button class="btn-grammar-mode" onclick="startGrammarMode('v1v2v3')">1. Perubahan V1, V2, V3</button>
-        <button class="btn-grammar-mode" onclick="startGrammarMode('dodoesdid')">2. Do, Does, Did</button>
-        <button class="btn-grammar-mode" onclick="startGrammarMode('modalv1')">3. Modal + V1 (can, will, dll)</button>
-        <button class="btn-grammar-mode" onclick="startGrammarMode('havehas')">4. Have / Has</button>
-        <button class="btn-grammar-mode" onclick="startGrammarMode('isamare')">5. Is / Am / Are</button>
-        <button class="btn-grammar-mode" onclick="startGrammarMode('vses')">6. Verb + s / es (Present)</button>
-        <button class="btn-grammar-mode" onclick="startGrammarMode('vtvi')">7. Transitive & Intransitive (Vt/Vi)</button>
-        <button class="btn-grammar-mode" onclick="startGrammarMode('nouncount')">8. Countable & Uncountable Noun</button>
-        <button class="btn-grammar-mode" onclick="startGrammarMode('pronouns')">9. Pronouns (Subject, Object, dll)</button>
-    </div>
+        <div class="menu-block-title">📖 Mode Latihan Grammar & Rules</div>
+        <div class="grammar-grid">
+            <button class="btn-grammar-mode" onclick="startGrammarMode('v1v2v3')">1. Perubahan V1, V2, V3</button>
+            <button class="btn-grammar-mode" onclick="startGrammarMode('dodoesdid')">2. Do, Does, Did</button>
+            <button class="btn-grammar-mode" onclick="startGrammarMode('modalv1')">3. Modal + V1 (can, will, dll)</button>
+            <button class="btn-grammar-mode" onclick="startGrammarMode('havehas')">4. Have / Has</button>
+            <button class="btn-grammar-mode" onclick="startGrammarMode('isamare')">5. Is / Am / Are</button>
+            <button class="btn-grammar-mode" onclick="startGrammarMode('vses')">6. Verb + s / es (Present)</button>
+            <button class="btn-grammar-mode" onclick="startGrammarMode('vtvi')">7. Transitive & Intransitive (Vt/Vi)</button>
+            <button class="btn-grammar-mode" onclick="startGrammarMode('nouncount')">8. Countable & Uncountable Noun</button>
+            <button class="btn-grammar-mode" onclick="startGrammarMode('pronouns')">9. Pronouns (Subject, Object, dll)</button>
+        </div>
 
-    <div class="menu-block-title">🧩 Susun Kalimat (Hal 41-45)</div>
-    <div class="section-grid">
-        <button class="btn-section" onclick="startSection(1)">Section 1</button>
-        <button class="btn-section" onclick="startSection(2)">Section 2</button>
-        <button class="btn-section" onclick="startSection(3)">Section 3</button>
-        <button class="btn-section" onclick="startSection(4)">Section 4</button>
-        <button class="btn-section" onclick="startSection(5)">Section 5</button>
-        <button class="btn-section" onclick="startSection(6)">Section 6</button>
-        <button class="btn-section" onclick="startSection(7)">Section 7</button>
-        <button class="btn-section" onclick="startSection(8)">Section 8</button>
+        <div class="menu-block-title">🧩 Susun Kalimat (Hal 41-45)</div>
+        <div class="section-grid">
+            <button class="btn-section" onclick="startSection(1)">Section 1</button>
+            <button class="btn-section" onclick="startSection(2)">Section 2</button>
+            <button class="btn-section" onclick="startSection(3)">Section 3</button>
+            <button class="btn-section" onclick="startSection(4)">Section 4</button>
+            <button class="btn-section" onclick="startSection(5)">Section 5</button>
+            <button class="btn-section" onclick="startSection(6)">Section 6</button>
+            <button class="btn-section" onclick="startSection(7)">Section 7</button>
+            <button class="btn-section" onclick="startSection(8)">Section 8</button>
+        </div>
     </div>
 </div>
 
@@ -290,169 +294,10 @@
 </div>
 
 <script>
-// Data Susun Kalimat
-const quizData = [
-    { id: "Udah sarapan?", en: "You got your breakfast?" },
-    { id: "Udah sarapan?", en: "Have you got your breakfast?" },
-    { id: "Menu apa buat sarapan?", en: "What's for breakfast?" },
-    { id: "Aku lapar. (starving)", en: "I'm starving." },
-    { id: "Aku lapar. (hungry)", en: "I'm hungry." },
-    { id: "Perutku keroncongan.", en: "My stomach is growling." },
-    { id: "Nyari makan yuk.", en: "Let's get something to eat." },
-    { id: "Mau makan siang apa?", en: "What do you want for lunch?" },
-    { id: "Selera makan ku hilang.", en: "I lost my appetite." },
-    { id: "Kayanya aku mau muntah.", en: "I'm feeling like I wanna throw up." },
-    { id: "Mungkin kamu masuk angin.", en: "Maybe you catch a cold." },
-    { id: "Kamu masak apa?", en: "What are you cooking?" },
-    { id: "Baunya bikin ngiler.", en: "The smell makes me water my mouth." },
-    { id: "Aku ga suka masak.", en: "I don't like cooking." },
-    { id: "Aku tukang masak yang buruk.", en: "I'm a bad cook." }, 
-    { id: "Terlalu asin/ keasinan.", en: "It's too salty." },
-    { id: "Kamu harus tambahin gula lagi.", en: "You need to add some more sugar." },
-    { id: "Aku suka makanan cepat saji.", en: "I like fast food." },
-    { id: "Cafe di ujung jalan sana payah.", en: "The cafe in the corner is terrible." },
-    { id: "Itu rumah makan prasmanan?", en: "Is it a buffet restaurant?" },
-    { id: "Itu rumah makan *a la carte.", en: "It's an ala carte restaurant." },
-    { id: "Pelayanannya bagus tapi masakannya payah.", en: "The service is good, but the cook sucks." }, 
-    { id: "Bisa beliin makan siang ga?", en: "Can you buy me my lunch?" },
-    { id: "Bisa nitip makanan ga?", en: "Can you get me something to eat?" },
-    { id: "Kamu keliatan capek. Mau ngopi sama aku?", en: "You look tired. Would you like to have a cup of coffee with me ?" },
-    { id: "Aku traktir.", en: "It's my treat." },
-    { id: "Emang sekarang aku butuh cafein.", en: "Caffeine is exactly what I need right now." }, 
-    { id: "Cuci tanganmu dulu sebelum makan.", en: "Wash your hands before eating." },
-    { id: "Aku ga suka makan pake sendok.", en: "I don't like to eat with spoon." },
-    { id: "Jangan ngecap.", en: "Don't smack your lips." },
-    { id: "Ada sesuatu di gigi kamu.", en: "You got something on your tooth." },
-    { id: "Jangan bersihin gigi di depan umum.", en: "Don't pick your tooth in public." },
-    { id: "Kamu makannya banyak.", en: "You eat like a horse." },
-    { id: "Kamu makannya sedikit.", en: "You eat like a bird." },
-    { id: "Saya vegetarian.", en: "I am a vegan." },
-    { id: "Saya gak makan daging.", en: "I don't eat meat." },
-    { id: "Saya gak suka daging.", en: "I don't like meat." },
-    { id: "Saya gak suka ikan.", en: "I hate fish." },
-    { id: "Aku gak suka ikan karna bau amis.", en: "I don't like fish because it's fishy." },
-    { id: "Saya lebih suka beli makanan dari pada masak.", en: "I'd rather buy food than cook." },
-    { id: "Saya benar-benar suka makanan pedas.", en: "I love spicy food like crazy." },
-    { id: "Terlalu banyak makan nasi gak baik buat kesehatan kamu.", en: "Eating too much rice is not good for your health." },
-    { id: "Mau nyobain?", en: "Have a bite?" },
-    { id: "Tambah lagi!", en: "Have some more!" },
-    { id: "Rasanya enak.", en: "The taste is good." },
-    { id: "Ini terlalu matang.", en: "It's overcooked." },
-    { id: "Ini kembaliannya.", en: "Here is your change." },
-    { id: "Punya uang pecaan kecil?", en: "Do you have a small change?" },
-    { id: "Bisa nukar uang 50 ribu?", en: "Could you break a Rp. 50.000 (50's) for me?" },
-    { id: "Ok. Mau pecahan berapa?", en: "Sure. How do you want it?" },
-    { id: "20 ribuan 2 dan sisanya 10 ribu?", en: "Could I have two 20's and the rest in ten?" },
-    { id: "Maaf, kayanya uang kembaliannya keliru.", en: "Excuse me, I think you've given me the wrong change." },
-    { id: "Bau nya enak.", en: "The smell is good." },
-    { id: "Aku nyium bau gosong.", en: "I smell something burning." },
-    { id: "Ya ampun! Aku lupa matiin kompor.", en: "OMG! I forgot to turn off the stove." },
-    { id: "Rasanya basi!", en: "It tastes stale!" }
-];
-
-// Data Vocab Spesial
-const specialVocabData = [
-    { word: "starving", meaning: "Sangat lapar / kelaparan" },
-    { word: "growling", meaning: "Keroncongan (suara perut)" },
-    { word: "appetite", meaning: "Selera makan" },
-    { word: "throw up", meaning: "Muntah" },
-    { word: "bad cook", meaning: "Koki/tukang masak yang buruk" },
-    { word: "a la carte", meaning: "Menu pesanan satuan" },
-    { word: "my treat", meaning: "Aku yang traktir" },
-    { word: "smack lips", meaning: "Mengecap saat makan" },
-    { word: "eat like a horse", meaning: "Makannya sangat banyak" },
-    { word: "eat like a bird", meaning: "Makannya sangat sedikit" },
-    { word: "fishy", meaning: "Bau amis" },
-    { word: "overcooked", meaning: "Terlalu matang" },
-    { word: "stale", meaning: "Basi / tidak segar lagi" },
-    { word: "small change", meaning: "Uang pecahan kecil" },
-    { word: "catch a cold", meaning: "Masuk angin / kena flu" }
-];
-
-// Data Latihan Grammar (9 Topik)
-const grammarData = {
-    v1v2v3: [
-        { q: "Bentuk V2 (Past) dari kata 'eat' adalah...", options: ["ate", "eaten", "eating", "eats"], ans: "ate" },
-        { q: "Bentuk V3 (Past Participle) dari kata 'go' adalah...", options: ["gone", "went", "going", "goes"], ans: "gone" },
-        { q: "Apa V2 dari kata kerja 'buy'?", options: ["bought", "buyed", "build", "brought"], ans: "bought" },
-        { q: "Kata kerja dasar (V1) dari 'written' adalah...", options: ["write", "wrote", "writed", "writing"], ans: "write" },
-        { q: "Bentuk V3 dari kata 'see' adalah...", options: ["seen", "saw", "sees", "seeing"], ans: "seen" },
-        { q: "Manakah bentuk V2 yang benar untuk 'make'?", options: ["made", "maked", "make", "making"], ans: "made" },
-        { q: "Apa V3 dari kata kerja irregular 'take'?", options: ["taken", "took", "takes", "taking"], ans: "taken" }
-    ],
-    dodoesdid: [
-        { q: "She ... not like eating fish. (Subjek tunggal, kalimat negatif present)", options: ["does", "do", "did", "done"], ans: "does" },
-        { q: "What ... you want for lunch yesterday? (Lampau/Past)", options: ["did", "do", "does", "done"], ans: "did" },
-        { q: "I ... not know how to cook a steak.", options: ["do", "does", "did", "is"], ans: "do" },
-        { q: "... he usually drink coffee in the morning?", options: ["Does", "Do", "Did", "Is"], ans: "Does" },
-        { q: "They ... not finish their food last night.", options: ["did", "do", "does", "are"], ans: "did" },
-        { q: "Where ... you usually buy your lunch?", options: ["do", "does", "did", "are"], ans: "do" },
-        { q: "... your mother cook every day?", options: ["Does", "Do", "Did", "Is"], ans: "Does" }
-    ],
-    modalv1: [
-        { q: "I can ... a delicious fried rice.", options: ["cook", "cooked", "cooking", "cooks"], ans: "cook" },
-        { q: "You must ... your hands before eating.", options: ["wash", "washed", "washing", "washes"], ans: "wash" },
-        { q: "She will ... me a cup of coffee.", options: ["buy", "bought", "buying", "buys"], ans: "buy" },
-        { q: "We should ... healthy food.", options: ["eat", "ate", "eaten", "eating"], ans: "eat" },
-        { q: "Could you ... me the menu, please?", options: ["give", "gave", "given", "giving"], ans: "give" },
-        { q: "He may ... late for dinner.", options: ["be", "is", "was", "been"], ans: "be" },
-        { q: "You must not ... while your mouth is full.", options: ["talk", "talked", "talking", "talks"], ans: "talk" }
-    ],
-    havehas: [
-        { q: "She ... already eaten her breakfast.", options: ["has", "have", "had", "is"], ans: "has" },
-        { q: "I ... lost my appetite.", options: ["have", "has", "had", "am"], ans: "have" },
-        { q: "We ... finished our lunch.", options: ["have", "has", "had", "are"], ans: "have" },
-        { q: "He ... cooked dinner for us.", options: ["has", "have", "had", "is"], ans: "has" },
-        { q: "They ... never tried spicy food before.", options: ["have", "has", "had", "are"], ans: "have" },
-        { q: "My mother ... bought some vegetables.", options: ["has", "have", "had", "is"], ans: "has" },
-        { q: "I ... a new recipe to try.", options: ["have", "has", "had", "am"], ans: "have" }
-    ],
-    isamare: [
-        { q: "I ... very hungry right now.", options: ["am", "is", "are", "be"], ans: "am" },
-        { q: "She ... cooking in the kitchen.", options: ["is", "am", "are", "be"], ans: "is" },
-        { q: "They ... ordering fast food.", options: ["are", "is", "am", "be"], ans: "are" },
-        { q: "You ... a good cook.", options: ["are", "is", "am", "be"], ans: "are" },
-        { q: "The soup ... too salty.", options: ["is", "are", "am", "be"], ans: "is" },
-        { q: "My friends ... vegetarians.", options: ["are", "is", "am", "be"], ans: "are" },
-        { q: "The kitchen ... smelling so good.", options: ["is", "are", "am", "be"], ans: "is" }
-    ],
-    vses: [
-        { q: "He always ... coffee in the morning.", options: ["drinks", "drink", "drinking", "drank"], ans: "drinks" },
-        { q: "She ... delicious food every weekend.", options: ["cooks", "cook", "cooking", "cooked"], ans: "cooks" },
-        { q: "My brother ... like spicy food.", options: ["doesn't", "don't", "didn't", "aren't"], ans: "doesn't" },
-        { q: "The restaurant ... open at 10 AM.", options: ["opens", "open", "opening", "opened"], ans: "opens" },
-        { q: "It ... good when food is fresh.", options: ["tastes", "taste", "tasting", "tasted"], ans: "tastes" },
-        { q: "An honest cook ... clean the kitchen.", options: ["keeps", "keep", "keeping", "kept"], ans: "keeps" },
-        { q: "She ... her hands before touching food.", options: ["washes", "wash", "washing", "washed"], ans: "washes" }
-    ],
-    vtvi: [
-        { q: "Kata kerja 'eat' dalam kalimat 'I eat an apple' bersifat...", options: ["Transitive (Vt - butuh objek)", "Intransitive (Vi - tidak butuh objek)", "Modal", "Auxiliary"], ans: "Transitive (Vt - butuh objek)" },
-        { q: "Kata kerja 'sleep' bersifat...", options: ["Intransitive (Vi - tidak butuh objek)", "Transitive (Vt - butuh objek)", "Noun", "Adjective"], ans: "Intransitive (Vi - tidak butuh objek)" },
-        { q: "Mana kata kerja yang bersifat Transitive (Vt)?", options: ["buy (membeli)", "arrive (tiba)", "fall (jatuh)", "smile (tersenyum)"], ans: "buy (membeli)" },
-        { q: "Mana kata kerja yang bersifat Intransitive (Vi)?", options: ["cry (menangis)", "cook (memasak)", "drink (minum)", "write (menulis)"], ans: "cry (menangis)" },
-        { q: "Kalimat 'She is laughing' menggunakan kata kerja...", options: ["Intransitive (Vi)", "Transitive (Vt)", "Passive", "Modal"], ans: "Intransitive (Vi)" },
-        { q: "Kalimat 'He bought a cup of coffee' menggunakan kata kerja...", options: ["Transitive (Vt)", "Intransitive (Vi)", "Linking verb", "Adverb"], ans: "Transitive (Vt)" },
-        { q: "Kata kerja 'arrive' (tiba) adalah contoh...", options: ["Intransitive (Vi)", "Transitive (Vt)", "Noun", "Pronoun"], ans: "Intransitive (Vi)" }
-    ],
-    nouncount: [
-        { q: "Manakah yang termasuk Uncountable Noun (tidak bisa dihitung)?", options: ["water (air)", "apple (apel)", "chair (kursi)", "book (buku)"], ans: "water (air)" },
-        { q: "Manakah yang termasuk Countable Noun (bisa dihitung)?", options: ["spoon (sendok)", "rice (nasi)", "sugar (gula)", "milk (susu)"], ans: "spoon (sendok)" },
-        { q: "Satuan hitung untuk Uncountable noun 'rice' adalah...", options: ["a bowl of rice", "a rice", "two rices", "many rice"], ans: "a bowl of rice" },
-        { q: "Mana yang merupakan Uncountable Noun terkait makanan?", options: ["salt (garam)", "egg (telur)", "carrot (wortel)", "burger (burger)"], ans: "salt (garam)" },
-        { q: "Bentuk plural regular dari 'apple' adalah...", options: ["apples", "applen", "applise", "apple"], ans: "apples" },
-        { q: "Bentuk plural irregular (tidak beraturan) dari 'child' adalah...", options: ["children", "childs", "childes", "childrens"], ans: "children" },
-        { q: "Manakah kata benda (noun) yang berbentuk uncountable?", options: ["coffee (kopi)", "cup (cangkir)", "plate (piring)", "fork (garpu)"], ans: "coffee (kopi)" }
-    ],
-    pronouns: [
-        { q: "Pronoun subject untuk menggantikan nama 'Budi' adalah...", options: ["he", "him", "his", "himself"], ans: "he" },
-        { q: "This book belongs to me. It is ... book. (Possessive Adjective)", options: ["my", "mine", "me", "myself"], ans: "my" },
-        { q: "Can you help ...? (Pronoun sebagai Object)", options: ["me", "my", "mine", "myself"], ans: "me" },
-        { q: "The pen is not yours, it is ... (Possessive Pronoun)", options: ["mine", "my", "me", "myself"], ans: "mine" },
-        { q: "I cut ... while cooking yesterday. (Reflexive Pronoun)", options: ["myself", "me", "my", "mine"], ans: "myself" },
-        { q: "She loves ... cat very much. (Possessive Adjective)", options: ["her", "she", "hers", "herself"], ans: "her" },
-        { q: "This is our food. It is ... (Possessive Pronoun)", options: ["ours", "our", "us", "we"], ans: "ours" }
-    ]
-};
+// Variabel Data Kosong (diisi dari JSON)
+let quizData = [];
+let specialVocabData = [];
+let grammarData = {};
 
 let mode = "sentence"; // 'sentence', 'vocab', atau 'grammar'
 let activeQuizData = [];
@@ -461,6 +306,30 @@ let score = 0;
 let mistakes = []; 
 let currentCorrectAnswer = "";
 let currentQuestionText = "";
+
+// Mengambil data dari JSON saat halaman dimuat
+window.onload = () => {
+    fetch('data_soal.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            quizData = data.quizData;
+            specialVocabData = data.specialVocabData;
+            grammarData = data.grammarData;
+            
+            // Sembunyikan loading, tampilkan menu
+            document.getElementById('loading-msg').style.display = 'none';
+            document.getElementById('menu-content').style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Error fetching JSON data:', error);
+            document.getElementById('loading-msg').innerHTML = '<span style="color:red;">Gagal memuat data_soal.json.<br>Pastikan Anda membuka file ini menggunakan Web Server (seperti Live Server/XAMPP).</span>';
+        });
+};
 
 function shuffle(array) {
     return array.sort(() => Math.random() - 0.5);
