@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buku Catatan Belajar — Grammar, Vocab & Game</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --desk-1:#2c2118;
+    --desk-2:#181109;
+    --paper:#fffdf8;
+    --paper-line:rgba(58,93,150,.15);
+    --margin-line:#e2897b;
+    --ink:#26221a;
+    --ink-soft:#6e6656;
+    --ink-faint:#a89d89;
+    --tab-grammar:#4c7ea8;
+    --tab-vocab:#dd9a3c;
+    --tab-sentence:#4f9f6e;
+    --tab-flash:#9b6fb0;
+    --tab-match:#c76b8a;
+    --tab-timed:#c8622f;
+    --correct:#2f8f52;
+    --correct-bg:#e8f5ec;
+    --wrong:#c8402f;
+    --wrong-bg:#fbeae7;
+    --pen-red:#d1372a;
+    --radius:6px;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:'Plus Jakarta Sans', sans-serif;
+    color:var(--ink);
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:36px 14px 60px;
+    background:
+      radial-gradient(ellipse 70% 40% at 50% -5%, #3a2b1c 0%, transparent 60%),
+      linear-gradient(160deg, var(--desk-1) 0%, var(--desk-2) 100%);
+    background-attachment:fixed;
+  }
+
+  .stage{ width:100%; max-width:460px; }
+
+  .header-label{
+    text-align:center;
+    margin-bottom:14px;
+  }
+  .header-label .kicker{
+    font-size:.68rem;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:#c9b89a;
+    margin-bottom:4px;
+  }
+  .header-label h1{
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size:2.1rem;
+    color:#fbf3e4;
+    margin:0;
+    line-height:1;
+  }
+
+  /* ===== NOTEBOOK CARD ===== */
+  .notebook-wrap{
+    position:relative;
+    filter:drop-shadow(0 20px 34px rgba(0,0,0,.5));
+  }
+  .notebook{
+    background:var(--paper);
+    background-image:
+      repeating-linear-gradient(180deg, transparent 0 31px, var(--paper-line) 31px 32px),
+      linear-gradient(90deg, transparent 0 46px, var(--margin-line) 46px 47.5px, transparent 47.5px);
+    border-radius:10px;
+    padding:26px 22px 24px 56px;
+    position:relative;
+  }
+  .notebook::before{
+    /* ring binder holes */
+    content:"";
+    position:absolute;
+    left:20px; top:34px; bottom:34px;
+    width:14px;
+    background-image:radial-gradient(circle, var(--desk-2) 0 5px, transparent 5.5px);
+    background-size:14px 68px;
+    background-repeat:repeat-y;
+    opacity:.9;
+  }
+  .notebook::after{
+    content:"";
+    position:absolute;
+    left:20px; top:34px; bottom:34px;
+    width:14px;
+    background-image:radial-gradient(circle, rgba(0,0,0,.18) 0 5px, transparent 6px);
+    background-size:14px 68px;
+    background-repeat:repeat-y;
+    transform:translate(1px,1px);
+  }
+
+  .notebook-inner{ position:relative; }
+
+  .btn-back-top{
+    position:absolute;
+    top:-4px; right:-2px;
+    background:none;
+    border:none;
+    color:var(--ink-faint);
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size:.82rem;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .btn-back-top:hover{ color:var(--ink); }
+
+  .page-title{
+    font-family:'Caveat', cursive;
+    font-size:1.7rem;
+    font-weight:700;
+    color:var(--ink);
+    margin:0 0 2px;
+  }
+  .sub-title{
+    color:var(--ink-soft);
+    font-size:.85rem;
+    margin:0 0 16px;
+  }
+
+  .menu-block-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:.78rem;
+    letter-spacing:.03em;
+    color:var(--ink);
+    text-align:left;
+    margin:18px 0 8px;
+    font-weight:700;
+  }
+  .tab-flag{
+    display:inline-block;
+    width:10px; height:10px;
+    border-radius:3px;
+    flex-shrink:0;
+  }
+
+  #loading-msg{
+    color:var(--ink-soft);
+    font-weight:600;
+    font-size:.88rem;
+    text-align:center;
+    padding:20px 0;
+  }
+  .load-error{ text-align:left; }
+  .load-error-hint{
+    font-size:.75rem;
+    color:var(--ink-soft);
+    font-weight:400;
+    margin-top:8px;
+    line-height:1.5;
+  }
+  .load-error code{
+    background:var(--paper-line-solid, #eef2f7);
+    padding:1px 5px;
+    border-radius:4px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:.72rem;
+  }
+
+  .section-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .grammar-grid{
+    display:grid; grid-template-columns:1fr; gap:6px;
+    max-height:190px; overflow-y:auto; padding-right:2px;
+  }
+  .grammar-grid::-webkit-scrollbar{ width:5px; }
+  .grammar-grid::-webkit-scrollbar-thumb{ background:var(--ink-faint); border-radius:4px; }
+
+  .btn-section, .btn-grammar-mode{
+    background:#fff;
+    border:1.5px solid #e4ddcc;
+    padding:9px 11px;
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size:.82rem;
+    font-weight:600;
+    color:var(--ink);
+    cursor:pointer;
+    text-align:left;
+    border-radius:var(--radius);
+    transition:all .15s;
+    border-left:4px solid var(--tab-grammar);
+  }
+  .btn-section{ text-align:center; border-left:4px solid var(--tab-sentence); }
+  .btn-section:hover, .btn-grammar-mode:hover{ background:#f7f3e8; transform:translateY(-1px); }
+
+  .btn-vocab-mode{
+    width:100%;
+    color:#fff;
+    border:none;
+    padding:12px;
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size:.88rem;
+    font-weight:700;
+    cursor:pointer;
+    border-radius:var(--radius);
+    transition:all .15s;
+    box-shadow:0 3px 0 rgba(0,0,0,.15);
+  }
+  .btn-vocab-mode:hover{ transform:translateY(1px); box-shadow:0 2px 0 rgba(0,0,0,.15); }
+
+  /* --- Quiz Styles --- */
+  .indonesian-text{
+    font-size:1.05rem;
+    font-weight:700;
+    color:var(--ink);
+    margin-bottom:16px;
+    line-height:1.4;
+  }
+
+  .timer-wrap{ display:none; margin-bottom:14px; }
+  .timer-row{ display:flex; justify-content:space-between; font-size:.75rem; font-weight:700; color:var(--ink-soft); margin-bottom:4px; }
+  .timer-track{ height:7px; background:#eee6d6; border-radius:6px; overflow:hidden; }
+  .timer-fill{ height:100%; background:var(--tab-timed); width:100%; transition:width 1s linear; }
+
+  .answer-area{
+    min-height:52px; border:1.5px dashed #cfc6b0; border-radius:var(--radius);
+    padding:10px; display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;
+    background:#fbf9f2; align-content:flex-start; transition:all .15s;
+  }
+  .answer-area.correct-border{ border-color:var(--correct); background:var(--correct-bg); }
+  .answer-area.wrong-border{ border-color:var(--wrong); background:var(--wrong-bg); }
+
+  .word-pool{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:18px; min-height:50px; }
+  .word-card{
+    background:#fff; border:1.5px solid var(--ink); padding:7px 11px;
+    font-family:'JetBrains Mono', monospace; font-size:.85rem; font-weight:700;
+    color:var(--ink); cursor:pointer; user-select:none; border-radius:5px;
+  }
+  .word-card:hover{ background:#f7f3e8; }
+  .word-card.disabled{ pointer-events:none; opacity:.55; }
+
+  .options-container{ display:flex; flex-direction:column; gap:9px; margin-bottom:18px; }
+  .btn-option{
+    background:#fff; border:1.5px solid #e4ddcc; padding:12px 14px;
+    font-size:.9rem; font-weight:600; color:var(--ink); cursor:pointer;
+    text-align:left; border-radius:var(--radius); transition:all .15s;
+  }
+  .btn-option:hover:not(:disabled){ background:#f7f3e8; border-color:var(--ink-faint); }
+  .btn-option:disabled{ cursor:default; }
+  .correct{ background:var(--correct-bg) !important; border-color:var(--correct) !important; color:var(--correct) !important; }
+  .wrong{ background:var(--wrong-bg) !important; border-color:var(--wrong) !important; color:var(--wrong) !important; }
+
+  /* Flashcard */
+  .flashcard-area{ display:none; margin-bottom:16px; }
+  .flip-card{
+    width:100%; min-height:170px; perspective:1000px; cursor:pointer; margin-bottom:14px;
+  }
+  .flip-card-inner{
+    position:relative; width:100%; height:170px; text-align:center;
+    transition:transform .5s; transform-style:preserve-3d;
+  }
+  .flip-card.flipped .flip-card-inner{ transform:rotateY(180deg); }
+  .flip-face{
+    position:absolute; inset:0; backface-visibility:hidden;
+    border:1.5px solid #e4ddcc; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    flex-direction:column; padding:14px; background:#fff;
+  }
+  .flip-front{ font-family:'Caveat', cursive; font-size:1.8rem; font-weight:700; }
+  .flip-back{ transform:rotateY(180deg); background:var(--correct-bg); font-weight:600; font-size:1rem; }
+  .flip-hint{ font-size:.68rem; color:var(--ink-faint); margin-top:8px; font-weight:400; }
+  .flash-actions{ display:flex; gap:8px; }
+  .btn-flash{
+    flex:1; padding:11px; border-radius:var(--radius); border:none; font-weight:700;
+    font-size:.85rem; cursor:pointer; color:#fff;
+  }
+  .btn-flash.no{ background:var(--wrong); }
+  .btn-flash.yes{ background:var(--correct); }
+
+  /* Matching */
+  .matching-area{ display:none; }
+  .matching-status{ font-size:.8rem; color:var(--ink-soft); margin-bottom:10px; font-weight:600; }
+  .matching-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px;
+  }
+  .match-tile{
+    background:#fff; border:1.5px solid #e4ddcc; border-radius:8px;
+    min-height:64px; display:flex; align-items:center; justify-content:center;
+    text-align:center; padding:6px; font-size:.72rem; font-weight:700; color:var(--ink);
+    cursor:pointer; transition:all .15s;
+  }
+  .match-tile.selected{ border-color:var(--tab-match); background:#fdf1f5; }
+  .match-tile.matched{ border-color:var(--correct); background:var(--correct-bg); color:var(--correct); cursor:default; opacity:.85; }
+  .match-tile.shake{ animation:shake .3s; border-color:var(--wrong); }
+  @keyframes shake{ 25%{transform:translateX(-4px);} 75%{transform:translateX(4px);} }
+
+  .feedback-msg{ margin-bottom:14px; font-size:.9rem; font-weight:700; min-height:1.2em; }
+  .feedback-msg .ok{ color:var(--correct); }
+  .feedback-msg .no{ color:var(--wrong); }
+  .feedback-msg .hint{ font-size:.78rem; color:var(--ink-soft); font-weight:400; display:block; margin-top:2px; }
+
+  .score-board{
+    margin-top:16px; display:flex; justify-content:space-between; font-size:.85rem;
+    font-weight:700; color:var(--ink); border-top:1.5px dashed #cfc6b0; padding-top:10px;
+  }
+  .score-board .label{ color:var(--ink-soft); font-weight:400; }
+
+  .btn-action{
+    padding:13px 20px; background:var(--ink); color:#fff; border:none; border-radius:var(--radius);
+    cursor:pointer; width:100%; font-size:.92rem; font-weight:700; display:none; transition:all .15s;
+  }
+  .btn-action:hover{ opacity:.85; }
+  .btn-check{ background:var(--correct); }
+  .btn-menu{ background:transparent; color:var(--ink); border:1.5px dashed #cfc6b0; margin-top:8px; }
+
+  .correction-container{
+    margin-top:18px; text-align:left; display:none; max-height:250px; overflow-y:auto; padding:0;
+  }
+  .correction-container h4{
+    margin:0 0 10px; color:var(--ink-soft); font-size:.72rem; letter-spacing:.06em;
+    text-transform:uppercase; font-weight:700;
+  }
+  .correction-item{ margin-bottom:12px; padding-bottom:10px; border-bottom:1px dashed #cfc6b0; }
+  .corr-q{ font-weight:700; color:var(--ink); margin-bottom:4px; font-size:.85rem; }
+  .corr-w{ color:var(--wrong); font-size:.78rem; }
+  .corr-c{ color:var(--correct); font-size:.78rem; }
+
+  /* Result: red-pen grading circle */
+  .result-total{ text-align:center; margin:10px 0 18px; }
+  .grade-wrap{ position:relative; width:150px; height:110px; margin:0 auto; }
+  .grade-wrap svg{ position:absolute; inset:0; width:100%; height:100%; }
+  .grade-wrap .grade-num{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family:'Caveat', cursive; font-weight:700; font-size:2.3rem; color:var(--pen-red);
+  }
+  .result-sub{ margin-top:10px; color:var(--ink-soft); font-size:.85rem; }
+  .result-note{ margin-top:12px; font-family:'Caveat', cursive; font-size:1.1rem; color:var(--ink-soft); }
+
+  @media (max-width:400px){
+    .notebook{ padding:22px 16px 20px 46px; }
+    .notebook::before, .notebook::after{ left:12px; }
+    .matching-grid{ grid-template-columns:repeat(2,1fr); }
+  }
+
+  button:focus-visible, .word-card:focus-visible, .match-tile:focus-visible{
+    outline:2px solid var(--tab-grammar); outline-offset:2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <div class="header-label">
+    <div class="kicker">Buku Catatan Digital</div>
+    <h1>Belajar Bahasa Inggris</h1>
+  </div>
+
+  <div class="notebook-wrap">
+    <div class="notebook">
+      <div class="notebook-inner">
+
+        <!-- Layar Utama (Menu) -->
+        <div id="menu-screen">
+          <div class="page-title">Daftar Isi</div>
+          <div class="sub-title">Pilih mode latihan kesukaanmu</div>
+
+          <div id="loading-msg">Membuka catatan soal...</div>
+
+          <div id="menu-content" style="display:none;">
+
+            <div class="menu-block-title"><span class="tab-flag" style="background:var(--tab-vocab);"></span>Vocab Spesial</div>
+            <button class="btn-vocab-mode" style="background:var(--tab-vocab); box-shadow-color:var(--tab-vocab);" onclick="startVocabMode()">Tebak Arti Vocab Pilihan</button>
+
+            <div class="menu-block-title"><span class="tab-flag" style="background:var(--tab-grammar);"></span>Grammar & Rules</div>
+            <div id="grammar-grid" class="grammar-grid"></div>
+
+            <div class="menu-block-title"><span class="tab-flag" style="background:var(--tab-sentence);"></span>Susun Kalimat</div>
+            <div id="section-grid" class="section-grid"></div>
+
+            <div class="menu-block-title"><span class="tab-flag" style="background:var(--tab-flash);"></span>Flashcard Vocab</div>
+            <button class="btn-vocab-mode" style="background:var(--tab-flash);" onclick="startFlashcardMode()">Latihan Kartu Bolak-balik</button>
+
+            <div class="menu-block-title"><span class="tab-flag" style="background:var(--tab-match);"></span>Cocokkan Pasangan</div>
+            <button class="btn-vocab-mode" style="background:var(--tab-match);" onclick="startMatchingMode()">Mulai Matching Game</button>
+
+            <div class="menu-block-title"><span class="tab-flag" style="background:var(--tab-timed);"></span>Tantangan Waktu</div>
+            <button class="btn-vocab-mode" style="background:var(--tab-timed);" onclick="startTimedMode()">Mulai Tantangan 60 Detik</button>
+
+          </div>
+        </div>
+
+        <!-- Layar Kuis -->
+        <div id="quiz-screen" style="display:none;">
+          <button class="btn-back-top" onclick="backToMenu()">‹ kembali</button>
+
+          <div class="page-title" id="quiz-title">Latihan</div>
+          <div class="sub-title" style="margin-bottom:14px;"></div>
+
+          <div class="timer-wrap" id="timer-wrap">
+            <div class="timer-row"><span>Waktu tersisa</span><span id="timer-text">60s</span></div>
+            <div class="timer-track"><div class="timer-fill" id="timer-fill"></div></div>
+          </div>
+
+          <div id="indonesian" class="indonesian-text">Loading...</div>
+
+          <div id="answer-area" class="answer-area" style="display:none;"></div>
+          <div id="word-pool" class="word-pool" style="display:none;"></div>
+
+          <div id="options-container" class="options-container" style="display:none;"></div>
+
+          <div id="flashcard-area" class="flashcard-area">
+            <div class="flip-card" id="flip-card" onclick="flipCard()">
+              <div class="flip-card-inner" id="flip-card-inner">
+                <div class="flip-face flip-front" id="flip-front"></div>
+                <div class="flip-face flip-back" id="flip-back"></div>
+              </div>
+            </div>
+            <div class="flip-hint" id="flip-hint">Ketuk kartu untuk lihat artinya</div>
+            <div class="flash-actions" id="flash-actions" style="display:none; margin-top:10px;">
+              <button class="btn-flash no" onclick="answerFlashcard(false)">Belum Hafal</button>
+              <button class="btn-flash yes" onclick="answerFlashcard(true)">Sudah Hafal</button>
+            </div>
+          </div>
+
+          <div id="matching-area" class="matching-area">
+            <div class="matching-status" id="matching-status">Cocokkan kata Inggris dengan artinya</div>
+            <div id="matching-grid" class="matching-grid"></div>
+          </div>
+
+          <div id="feedback-msg" class="feedback-msg"></div>
+          <div id="correction-container" class="correction-container"></div>
+
+          <button id="check-btn" class="btn-action btn-check" onclick="checkSentenceAnswer()">Cek Jawaban</button>
+          <button id="next-btn" class="btn-action" style="margin-top:10px;" onclick="nextQuestion()">Soal Berikutnya</button>
+          <button id="back-menu-btn" class="btn-action btn-menu" style="margin-top:10px;" onclick="backToMenu()">Kembali ke Menu</button>
+
+          <div id="score" class="score-board"><span class="label">Skor</span><span id="score-val">0 / 0</span></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ====== Data & Load (fetch dari data_soal.json, supaya gampang ditambah soal) ======
+let quizData = [];
+let specialVocabData = [];
+let grammarData = {};
+
+const soalPerSection = 7;
+
+// Judul rapi untuk topik grammar yang sudah dikenal. Topik baru (key baru
+// di JSON) otomatis dapat judul hasil "rapikan" dari nama key-nya.
+const grammarTitleMap = {
+    v1v2v3: "Perubahan V1, V2, V3",
+    dodoesdid: "Do, Does, Did",
+    modalv1: "Modal + V1 (can, will, dll)",
+    havehas: "Have / Has",
+    isamare: "Is / Am / Are",
+    vses: "Verb + s / es (Present)",
+    vtvi: "Transitive & Intransitive (Vt/Vi)",
+    nouncount: "Countable & Uncountable Noun",
+    pronouns: "Pronouns (Subject, Object, dll)"
+};
+
+function prettifyKey(key) {
+    return key
+        .replace(/([a-z])([A-Z])/g, "$1 $2")
+        .replace(/[_-]/g, " ")
+        .replace(/\b\w/g, c => c.toUpperCase());
+}
+
+window.onload = () => {
+    fetch('data_soal.json')
+        .then(response => {
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+            return response.json();
+        })
+        .then(data => {
+            quizData = data.quizData || [];
+            specialVocabData = data.specialVocabData || [];
+            grammarData = data.grammarData || {};
+
+            generateSectionButtons();
+            generateGrammarButtons();
+
+            document.getElementById('loading-msg').style.display = 'none';
+            document.getElementById('menu-content').style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Error fetching data_soal.json:', error);
+            document.getElementById('loading-msg').innerHTML = `
+                <div class="load-error">
+                    <div>⚠️ Gagal memuat <code>data_soal.json</code>.</div>
+                    <div class="load-error-hint">
+                        Kemungkinan besar file ini dibuka langsung (dobel-klik), sehingga browser
+                        memblokir pengambilan file lokal. Pastikan <code>index.html</code> dan
+                        <code>data_soal.json</code> berada di folder yang sama, lalu jalankan lewat
+                        server lokal — contoh: buka folder ini di VS Code lalu klik kanan
+                        <code>index.html</code> → "Open with Live Server", atau jalankan
+                        <code>python -m http.server</code> di folder ini dan buka
+                        <code>http://localhost:8000</code>.
+                    </div>
+                    <button class="btn-action" style="display:block;" onclick="location.reload()">Coba Lagi</button>
+                </div>`;
+        });
+};
+
+// Tombol Section (Susun Kalimat) — otomatis sesuai jumlah soal
+function generateSectionButtons() {
+    const sectionGrid = document.getElementById('section-grid');
+    sectionGrid.innerHTML = '';
+    const totalSections = Math.ceil(quizData.length / soalPerSection);
+    for (let i = 1; i <= totalSections; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'btn-section';
+        btn.innerText = `Section ${i}`;
+        btn.onclick = () => startSection(i);
+        sectionGrid.appendChild(btn);
+    }
+}
+
+// Tombol Grammar — otomatis sesuai topik yang ada di grammarData.
+// Tambah topik baru di JSON => tombolnya otomatis muncul di sini.
+function generateGrammarButtons() {
+    const grid = document.getElementById('grammar-grid');
+    grid.innerHTML = '';
+    Object.keys(grammarData).forEach((key, idx) => {
+        const title = grammarTitleMap[key] || prettifyKey(key);
+        const btn = document.createElement('button');
+        btn.className = 'btn-grammar-mode';
+        btn.innerText = `${idx + 1}. ${title}`;
+        btn.onclick = () => startGrammarMode(key);
+        grid.appendChild(btn);
+    });
+}
+
+function shuffle(array) {
+    return array.sort(() => Math.random() - 0.5);
+}
+
+// ====== State Global ======
+let mode = "sentence"; // sentence | vocab | grammar | flashcard | matching | timed
+let activeQuizData = [];
+let currentQuestion = 0;
+let score = 0;
+let mistakes = [];
+let currentCorrectAnswer = "";
+let currentQuestionText = "";
+let timedInterval = null;
+
+function backToMenu() {
+    stopTimer();
+    document.getElementById('quiz-screen').style.display = 'none';
+    document.getElementById('menu-screen').style.display = 'block';
+}
+
+function stopTimer() {
+    if (timedInterval) {
+        clearInterval(timedInterval);
+        timedInterval = null;
+    }
+    document.getElementById('timer-wrap').style.display = 'none';
+}
+
+// Sembunyikan semua area interaksi mode; masing-masing load*Question akan
+// menampilkan lagi area yang dia perlukan.
+function hideAllModeAreas() {
+    document.getElementById('answer-area').style.display = 'none';
+    document.getElementById('word-pool').style.display = 'none';
+    document.getElementById('options-container').style.display = 'none';
+    document.getElementById('flashcard-area').style.display = 'none';
+    document.getElementById('matching-area').style.display = 'none';
+    document.getElementById('check-btn').style.display = 'none';
+    document.getElementById('next-btn').style.display = 'none';
+}
+
+// Handler Menu Pilihan
+function startSection(sectionNumber) {
+    mode = "sentence";
+    const startIndex = (sectionNumber - 1) * soalPerSection;
+    const endIndex = startIndex + soalPerSection;
+    activeQuizData = shuffle(quizData.slice(startIndex, endIndex));
+    initQuizScreen(`Section ${sectionNumber}`);
+}
+
+function startVocabMode() {
+    mode = "vocab";
+    activeQuizData = shuffle([...specialVocabData]).slice(0, 10);
+    initQuizScreen("🔥 Vocab Spesial");
+}
+
+function startGrammarMode(topicKey) {
+    mode = "grammar";
+    activeQuizData = grammarData[topicKey];
+    initQuizScreen("📖 Latihan Grammar");
+}
+
+function initQuizScreen(title) {
+    currentQuestion = 0;
+    score = 0;
+    mistakes = [];
+
+    document.getElementById('menu-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
+    document.getElementById('quiz-title').innerText = title;
+    document.getElementById('back-menu-btn').style.display = 'none';
+    document.getElementById('score').style.display = 'flex';
+    document.getElementById('correction-container').style.display = 'none';
+    document.getElementById('correction-container').innerHTML = '';
+
+    loadQuestion();
+}
+
+function loadQuestion() {
+    document.getElementById('feedback-msg').innerHTML = '';
+    hideAllModeAreas();
+
+    if (mode === "sentence") {
+        loadSentenceQuestion();
+    } else if (mode === "vocab") {
+        loadVocabQuestion();
+    } else if (mode === "grammar" || mode === "timed") {
+        loadOptionQuestion();
+    }
+}
+
+// 1. Mode Susun Kalimat
+function loadSentenceQuestion() {
+    document.getElementById('answer-area').style.display = 'flex';
+    document.getElementById('word-pool').style.display = 'flex';
+
+    const q = activeQuizData[currentQuestion];
+    let cleanedString = q.en.replace(/[.,?!*()]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+
+    currentCorrectAnswer = cleanedString;
+    currentQuestionText = q.id;
+
+    document.getElementById('indonesian').innerHTML = `${currentQuestion + 1}. ${q.id}`;
+
+    const answerArea = document.getElementById('answer-area');
+    const wordPool = document.getElementById('word-pool');
+    answerArea.innerHTML = '';
+    wordPool.innerHTML = '';
+    answerArea.className = 'answer-area';
+
+    let correctWords = currentCorrectAnswer.split(' ');
+    let decoyWords = [];
+    quizData.forEach(item => {
+        if (item.en !== q.en) {
+            let cleanItem = item.en.replace(/[.,?!*()]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+            decoyWords.push(...cleanItem.split(' '));
+        }
+    });
+    decoyWords = [...new Set(decoyWords)].filter(w => !correctWords.includes(w) && w.length > 0);
+    decoyWords = shuffle(decoyWords);
+    let selectedDecoys = decoyWords.slice(0, 3);
+
+    let finalWords = shuffle(correctWords.concat(selectedDecoys));
+    finalWords.forEach(w => {
+        const wordBtn = document.createElement('div');
+        wordBtn.className = 'word-card';
+        wordBtn.innerText = w;
+        wordBtn.tabIndex = 0;
+        wordBtn.onclick = () => moveWord(wordBtn);
+        wordBtn.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); moveWord(wordBtn); } };
+        wordPool.appendChild(wordBtn);
+    });
+
+    document.getElementById('check-btn').style.display = 'block';
+    updateScoreBoard();
+}
+
+// 2. Mode Vocab Spesial
+function loadVocabQuestion() {
+    document.getElementById('options-container').style.display = 'flex';
+    const optContainer = document.getElementById('options-container');
+    optContainer.innerHTML = '';
+
+    const q = activeQuizData[currentQuestion];
+    currentCorrectAnswer = q.meaning;
+    currentQuestionText = q.word;
+
+    document.getElementById('indonesian').innerHTML = `${currentQuestion + 1}. Apa arti dari <u>"${q.word}"</u>?`;
+
+    let options = [q.meaning];
+    while (options.length < 4 && options.length < specialVocabData.length) {
+        let randMeaning = specialVocabData[Math.floor(Math.random() * specialVocabData.length)].meaning;
+        if (!options.includes(randMeaning)) options.push(randMeaning);
+    }
+    options = shuffle(options);
+
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-option';
+        btn.innerText = opt;
+        btn.onclick = () => checkOptionAnswer(btn, opt);
+        optContainer.appendChild(btn);
+    });
+    updateScoreBoard();
+}
+
+// 3. Mode pilihan-ganda generik (dipakai Grammar & Tantangan Waktu)
+function loadOptionQuestion() {
+    document.getElementById('options-container').style.display = 'flex';
+    const optContainer = document.getElementById('options-container');
+    optContainer.innerHTML = '';
+
+    const q = activeQuizData[currentQuestion];
+    currentCorrectAnswer = q.ans;
+    currentQuestionText = q.q;
+
+    document.getElementById('indonesian').innerHTML = `${currentQuestion + 1}. ${q.q}`;
+
+    let options = shuffle([...q.options]);
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-option';
+        btn.innerText = opt;
+        btn.onclick = () => checkOptionAnswer(btn, opt);
+        optContainer.appendChild(btn);
+    });
+    updateScoreBoard();
+}
+
+function updateScoreBoard() {
+    if (mode === "timed") {
+        document.getElementById('score-val').innerText = `${score} benar (${timedAttempted} soal)`;
+    } else {
+        document.getElementById('score-val').innerText = `${score} / ${activeQuizData.length}`;
+    }
+}
+
+function moveWord(wordElement) {
+    const wordPool = document.getElementById('word-pool');
+    const answerArea = document.getElementById('answer-area');
+    if (wordElement.parentElement === wordPool) {
+        answerArea.appendChild(wordElement);
+    } else {
+        wordPool.appendChild(wordElement);
+    }
+}
+
+function checkSentenceAnswer() {
+    const answerArea = document.getElementById('answer-area');
+    const feedback = document.getElementById('feedback-msg');
+    const userWords = Array.from(answerArea.children).map(card => card.innerText);
+    const userAnswer = userWords.join(' ');
+
+    document.querySelectorAll('.word-card').forEach(card => card.classList.add('disabled'));
+
+    if (userAnswer === currentCorrectAnswer) {
+        answerArea.classList.add('correct-border');
+        feedback.innerHTML = '<span class="ok">✅ Sempurna!</span>';
+        score++;
+    } else {
+        answerArea.classList.add('wrong-border');
+        feedback.innerHTML = `<span class="no">❌ Kurang tepat.</span><span class="hint">Jawaban benar: <b>${currentCorrectAnswer}</b></span>`;
+        mistakes.push({ question: currentQuestionText, wrongAns: userAnswer || "(Kosong)", correctAns: currentCorrectAnswer });
+    }
+
+    document.getElementById('check-btn').style.display = 'none';
+    document.getElementById('next-btn').style.display = 'block';
+    updateScoreBoard();
+}
+
+function checkOptionAnswer(selectedBtn, selectedOpt) {
+    const buttons = document.querySelectorAll('.btn-option');
+    buttons.forEach(btn => btn.disabled = true);
+    const feedback = document.getElementById('feedback-msg');
+
+    let isCorrect = selectedOpt === currentCorrectAnswer;
+    if (isCorrect) {
+        selectedBtn.classList.add('correct');
+        feedback.innerHTML = '<span class="ok">✅ Benar Sekali!</span>';
+        score++;
+    } else {
+        selectedBtn.classList.add('wrong');
+        feedback.innerHTML = `<span class="no">❌ Kurang Tepat.</span>`;
+        buttons.forEach(btn => { if (btn.innerText === currentCorrectAnswer) btn.classList.add('correct'); });
+        mistakes.push({ question: currentQuestionText, wrongAns: selectedOpt, correctAns: currentCorrectAnswer });
+    }
+
+    updateScoreBoard();
+
+    if (mode === "timed") {
+        // Mode timed auto-lanjut cepat, tidak menunggu klik "Soal Berikutnya"
+        timedAttempted++;
+        setTimeout(() => {
+            if (timedInterval) advanceTimedQuestion();
+        }, 550);
+    } else {
+        document.getElementById('next-btn').style.display = 'block';
+    }
+}
+
+function nextQuestion() {
+    currentQuestion++;
+    if (currentQuestion < activeQuizData.length) {
+        loadQuestion();
+    } else {
+        showResults();
+    }
+}
+
+// ====== Hasil Akhir (dipakai semua mode) — angka dilingkari ala nilai guru ======
+function showResults(customScore, customTotal, subLabel) {
+    const finalScore = customScore !== undefined ? customScore : score;
+    const finalTotal = customTotal !== undefined ? customTotal : activeQuizData.length;
+    const wrongCount = mistakes.length;
+
+    stopTimer();
+    hideAllModeAreas();
+    document.getElementById('indonesian').innerHTML = '';
+    document.getElementById('feedback-msg').innerHTML = '';
+    document.getElementById('score').style.display = 'none';
+
+    const resultHTML = `
+        <div class="result-total">
+            <div class="grade-wrap">
+                <svg viewBox="0 0 150 110"><ellipse cx="75" cy="55" rx="68" ry="42" fill="none" stroke="var(--pen-red)" stroke-width="3.5"/></svg>
+                <div class="grade-num">${finalScore}/${finalTotal}</div>
+            </div>
+            <div class="result-sub">${subLabel ? subLabel : `Benar: <b style="color:var(--correct);">${finalScore}</b> &nbsp;|&nbsp; Salah: <b style="color:var(--wrong);">${wrongCount}</b>`}</div>
+            <div class="result-note">Terus semangat belajarnya! ✍️</div>
+        </div>`;
+    document.getElementById('feedback-msg').insertAdjacentHTML('beforebegin', resultHTML);
+
+    if (wrongCount > 0) {
+        let corrHTML = '<h4>Koreksi Jawaban</h4>';
+        mistakes.forEach((m, index) => {
+            corrHTML += `
+            <div class="correction-item">
+                <div class="corr-q">${index + 1}. ${m.question}</div>
+                <div class="corr-w">❌ Jawabanmu: ${m.wrongAns}</div>
+                <div class="corr-c">✅ Seharusnya: ${m.correctAns}</div>
+            </div>`;
+        });
+        const corrContainer = document.getElementById('correction-container');
+        corrContainer.innerHTML = corrHTML;
+        corrContainer.style.display = 'block';
+    }
+
+    document.getElementById('back-menu-btn').style.display = 'block';
+}
+
+// ====== MODE 4: Flashcard Vocab ======
+let flashKnown = 0;
+function startFlashcardMode() {
+    mode = "flashcard";
+    activeQuizData = shuffle([...specialVocabData]);
+    currentQuestion = 0;
+    score = 0;
+    flashKnown = 0;
+    mistakes = [];
+
+    document.getElementById('menu-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
+    document.getElementById('quiz-title').innerText = '🃏 Flashcard Vocab';
+    document.getElementById('back-menu-btn').style.display = 'none';
+    document.getElementById('score').style.display = 'flex';
+    document.getElementById('correction-container').style.display = 'none';
+    document.getElementById('correction-container').innerHTML = '';
+
+    loadFlashcard();
+}
+
+function loadFlashcard() {
+    document.getElementById('feedback-msg').innerHTML = '';
+    hideAllModeAreas();
+    document.getElementById('flashcard-area').style.display = 'block';
+    document.getElementById('flash-actions').style.display = 'none';
+    document.getElementById('flip-hint').style.display = 'block';
+
+    const card = document.getElementById('flip-card');
+    card.classList.remove('flipped');
+
+    const q = activeQuizData[currentQuestion];
+    document.getElementById('indonesian').innerHTML = `Kartu ${currentQuestion + 1} dari ${activeQuizData.length}`;
+    document.getElementById('flip-front').innerText = q.word;
+    document.getElementById('flip-back').innerText = q.meaning;
+
+    updateScoreBoard();
+}
+
+function flipCard() {
+    const card = document.getElementById('flip-card');
+    const wasFlipped = card.classList.contains('flipped');
+    card.classList.toggle('flipped');
+    if (!wasFlipped) {
+        document.getElementById('flash-actions').style.display = 'flex';
+        document.getElementById('flip-hint').style.display = 'none';
+    }
+}
+
+function answerFlashcard(known) {
+    if (known) { score++; flashKnown++; }
+    else { mistakes.push({ question: activeQuizData[currentQuestion].word, wrongAns: '(Belum hafal)', correctAns: activeQuizData[currentQuestion].meaning }); }
+
+    currentQuestion++;
+    if (currentQuestion < activeQuizData.length) {
+        loadFlashcard();
+    } else {
+        showResults(flashKnown, activeQuizData.length, `Kamu hafal <b style="color:var(--correct);">${flashKnown}</b> dari ${activeQuizData.length} kartu`);
+    }
+}
+
+// ====== MODE 5: Matching Game ======
+let matchState = { firstTile: null, matchedCount: 0, totalPairs: 0, attempts: 0, locked: false };
+
+function startMatchingMode() {
+    mode = "matching";
+    const pairCount = Math.min(6, specialVocabData.length);
+    activeQuizData = shuffle([...specialVocabData]).slice(0, pairCount);
+    matchState = { firstTile: null, matchedCount: 0, totalPairs: pairCount, attempts: 0, locked: false };
+    mistakes = [];
+
+    document.getElementById('menu-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
+    document.getElementById('quiz-title').innerText = '🔗 Cocokkan Pasangan';
+    document.getElementById('back-menu-btn').style.display = 'none';
+    document.getElementById('score').style.display = 'none';
+    document.getElementById('correction-container').style.display = 'none';
+    document.getElementById('correction-container').innerHTML = '';
+    document.getElementById('feedback-msg').innerHTML = '';
+    document.getElementById('indonesian').innerHTML = '';
+
+    hideAllModeAreas();
+    document.getElementById('matching-area').style.display = 'block';
+
+    let tiles = [];
+    activeQuizData.forEach((item, idx) => {
+        tiles.push({ pairId: idx, text: item.word, type: 'word' });
+        tiles.push({ pairId: idx, text: item.meaning, type: 'meaning' });
+    });
+    tiles = shuffle(tiles);
+
+    const grid = document.getElementById('matching-grid');
+    grid.innerHTML = '';
+    tiles.forEach((t, i) => {
+        const tile = document.createElement('div');
+        tile.className = 'match-tile';
+        tile.innerText = t.text;
+        tile.dataset.pairId = t.pairId;
+        tile.tabIndex = 0;
+        tile.onclick = () => selectMatchTile(tile);
+        grid.appendChild(tile);
+    });
+
+    updateMatchingStatus();
+}
+
+function updateMatchingStatus() {
+    document.getElementById('matching-status').innerText =
+        `Pasangan ditemukan: ${matchState.matchedCount} / ${matchState.totalPairs} — Percobaan: ${matchState.attempts}`;
+}
+
+function selectMatchTile(tile) {
+    if (matchState.locked || tile.classList.contains('matched') || tile.classList.contains('selected')) return;
+
+    tile.classList.add('selected');
+
+    if (!matchState.firstTile) {
+        matchState.firstTile = tile;
+        return;
+    }
+
+    matchState.locked = true;
+    matchState.attempts++;
+    const first = matchState.firstTile;
+
+    if (first.dataset.pairId === tile.dataset.pairId && first !== tile) {
+        first.classList.add('matched');
+        tile.classList.add('matched');
+        first.classList.remove('selected');
+        tile.classList.remove('selected');
+        matchState.matchedCount++;
+        matchState.firstTile = null;
+        matchState.locked = false;
+        updateMatchingStatus();
+
+        if (matchState.matchedCount === matchState.totalPairs) {
+            setTimeout(() => {
+                showResults(matchState.totalPairs, matchState.totalPairs,
+                    `Selesai dalam <b>${matchState.attempts}</b> percobaan`);
+            }, 400);
+        }
+    } else {
+        tile.classList.add('shake');
+        first.classList.add('shake');
+        setTimeout(() => {
+            first.classList.remove('selected', 'shake');
+            tile.classList.remove('selected', 'shake');
+            matchState.firstTile = null;
+            matchState.locked = false;
+            updateMatchingStatus();
+        }, 650);
+    }
+}
+
+// ====== MODE 6: Tantangan Waktu (60 detik) ======
+const TIMED_DURATION = 60;
+let timedAttempted = 0;
+
+function buildTimedPool() {
+    let pool = [];
+    Object.values(grammarData).forEach(topicQs => {
+        topicQs.forEach(q => pool.push({ q: q.q, options: q.options, ans: q.ans }));
+    });
+    specialVocabData.forEach(v => {
+        let opts = [v.meaning];
+        while (opts.length < 4 && opts.length < specialVocabData.length) {
+            let r = specialVocabData[Math.floor(Math.random() * specialVocabData.length)].meaning;
+            if (!opts.includes(r)) opts.push(r);
+        }
+        pool.push({ q: `Apa arti dari "${v.word}"?`, options: shuffle(opts), ans: v.meaning });
+    });
+    return shuffle(pool);
+}
+
+function startTimedMode() {
+    mode = "timed";
+    activeQuizData = buildTimedPool();
+    currentQuestion = 0;
+    score = 0;
+    mistakes = [];
+    timedAttempted = 0;
+
+    document.getElementById('menu-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
+    document.getElementById('quiz-title').innerText = '⏱️ Tantangan 60 Detik';
+    document.getElementById('back-menu-btn').style.display = 'none';
+    document.getElementById('score').style.display = 'flex';
+    document.getElementById('correction-container').style.display = 'none';
+    document.getElementById('correction-container').innerHTML = '';
+
+    document.getElementById('timer-wrap').style.display = 'block';
+    let timeLeft = TIMED_DURATION;
+    updateTimerUI(timeLeft);
+
+    timedInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerUI(timeLeft);
+        if (timeLeft <= 0) {
+            finishTimedChallenge();
+        }
+    }, 1000);
+
+    loadQuestion();
+}
+
+function updateTimerUI(timeLeft) {
+    document.getElementById('timer-text').innerText = `${Math.max(timeLeft, 0)}s`;
+    document.getElementById('timer-fill').style.width = `${Math.max(timeLeft, 0) / TIMED_DURATION * 100}%`;
+}
+
+function advanceTimedQuestion() {
+    currentQuestion++;
+    if (currentQuestion >= activeQuizData.length) {
+        activeQuizData = activeQuizData.concat(buildTimedPool());
+    }
+    loadQuestion();
+}
+
+function finishTimedChallenge() {
+    stopTimer();
+    showResults(score, timedAttempted, `Kamu menjawab <b>${timedAttempted}</b> soal, <b style="color:var(--correct);">${score}</b> benar`);
+}
+</script>
+</body>
+</html>
