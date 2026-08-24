@@ -255,16 +255,9 @@
             <button class="btn-grammar-mode" onclick="startGrammarMode('pronouns')">9. Pronouns (Subject, Object, dll)</button>
         </div>
 
-        <div class="menu-block-title">🧩 Susun Kalimat (Hal 41-45)</div>
-        <div class="section-grid">
-            <button class="btn-section" onclick="startSection(1)">Section 1</button>
-            <button class="btn-section" onclick="startSection(2)">Section 2</button>
-            <button class="btn-section" onclick="startSection(3)">Section 3</button>
-            <button class="btn-section" onclick="startSection(4)">Section 4</button>
-            <button class="btn-section" onclick="startSection(5)">Section 5</button>
-            <button class="btn-section" onclick="startSection(6)">Section 6</button>
-            <button class="btn-section" onclick="startSection(7)">Section 7</button>
-            <button class="btn-section" onclick="startSection(8)">Section 8</button>
+        <div class="menu-block-title">🧩 Susun Kalimat</div>
+        <div id="section-grid" class="section-grid">
+            <!-- Tombol akan dibuat otomatis oleh JavaScript disini -->
         </div>
     </div>
 </div>
@@ -307,6 +300,8 @@ let mistakes = [];
 let currentCorrectAnswer = "";
 let currentQuestionText = "";
 
+const soalPerSection = 7; // Jumlah soal per section
+
 // Mengambil data dari JSON saat halaman dimuat
 window.onload = () => {
     fetch('data_soal.json')
@@ -321,6 +316,9 @@ window.onload = () => {
             specialVocabData = data.specialVocabData;
             grammarData = data.grammarData;
             
+            // Panggil fungsi untuk membuat tombol otomatis
+            generateSectionButtons();
+
             // Sembunyikan loading, tampilkan menu
             document.getElementById('loading-msg').style.display = 'none';
             document.getElementById('menu-content').style.display = 'block';
@@ -330,6 +328,23 @@ window.onload = () => {
             document.getElementById('loading-msg').innerHTML = '<span style="color:red;">Gagal memuat data_soal.json.<br>Pastikan Anda membuka file ini menggunakan Web Server (seperti Live Server/XAMPP).</span>';
         });
 };
+
+// Fungsi membuat tombol Section otomatis
+function generateSectionButtons() {
+    const sectionGrid = document.getElementById('section-grid');
+    sectionGrid.innerHTML = ''; // Bersihkan isi sebelumnya
+    
+    const totalSections = Math.ceil(quizData.length / soalPerSection);
+
+    // Looping untuk membuat tombol sebanyak total section
+    for (let i = 1; i <= totalSections; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'btn-section';
+        btn.innerText = `Section ${i}`;
+        btn.onclick = () => startSection(i);
+        sectionGrid.appendChild(btn);
+    }
+}
 
 function shuffle(array) {
     return array.sort(() => Math.random() - 0.5);
@@ -343,8 +358,8 @@ function backToMenu() {
 // Handler Menu Pilihan
 function startSection(sectionNumber) {
     mode = "sentence";
-    const startIndex = (sectionNumber - 1) * 7;
-    const endIndex = startIndex + 7;
+    const startIndex = (sectionNumber - 1) * soalPerSection;
+    const endIndex = startIndex + soalPerSection;
     activeQuizData = quizData.slice(startIndex, endIndex);
     activeQuizData = shuffle(activeQuizData); 
     initQuizScreen(`Section ${sectionNumber}`);
