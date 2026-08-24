@@ -55,7 +55,21 @@
         { "id": "Bau nya enak.", "en": "The smell is good." },
         { "id": "Aku nyium bau gosong.", "en": "I smell something burning." },
         { "id": "Ya ampun! Aku lupa matiin kompor.", "en": "OMG! I forgot to turn off the stove." },
-        { "id": "Rasanya basi!", "en": "It tastes stale!" }
+        { "id": "Rasanya basi!", "en": "It tastes stale!" },
+         { "id": "Lain kali kamu yang traktir.", "en": "Next time you'll treat." },
+    { "id": "Aku ga bisa makan diluar. Aku bokek.", "en": "I can't eat out. I'm broke." },
+    { "id": "Seberapa sering kamu makan diluar?", "en": "How often do you eat out?" },
+    { "id": "Saya mau pesan meja buat makan makan.", "en": "I'd like to reserve a table for dinner." },
+    { "id": "Aku yang bayarin.", "en": "It's on me." },
+    { "id": "Aku yang traktir.", "en": "It's my treat." },
+    { "id": "Patungan ya.", "en": "Let's share the bill." },
+    { "id": "Siapa di dalam?", "en": "Who's inside?" },
+    { "id": "Bisa cepetan dikit ga?", "en": "Can you make it a little faster?" },
+    { "id": "Udah ga bisa nahan nih/ sudah kebelet.", "en": "I can't bear it any longer." },
+    { "id": "Tunggu. Aku baru aja masuk.", "en": "Wait up. I just got in." },
+    { "id": "Cuma cuci muka aja", "en": "I'm just washing my face" },
+    { "id": "Cuma pipis aja.", "en": "I'm just peeing" },
+    { "id": "Jangan lupa disiram.", "en": "Don't forget to flush." }
     ],
     "specialVocabData": [
         { "word": "starving", "meaning": "Sangat lapar / kelaparan" },
