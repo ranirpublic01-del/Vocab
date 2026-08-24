@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warung Bahasa — Struk Belajar Grammar & Vocab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night-1:#120d09;
+    --night-2:#1e150d;
+    --paper:#faf4e6;
+    --paper-2:#f2ead6;
+    --ink:#2b2015;
+    --ink-soft:#5c4c38;
+    --ink-faint:#9c8a70;
+    --gold:#e3a63d;
+    --gold-dark:#b9822b;
+    --herb:#3f8f6c;
+    --herb-bg:#e4f2ea;
+    --chili:#c6432b;
+    --chili-bg:#fbe9e4;
+    --dash:#cabb9c;
+    --radius:2px;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{ height:100%; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:'Space Mono', monospace;
+    color:var(--ink);
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:40px 16px 60px;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 0%, #2a1c10 0%, transparent 70%),
+      linear-gradient(180deg, var(--night-1) 0%, var(--night-2) 100%);
+    background-attachment:fixed;
+    position:relative;
+    overflow-x:hidden;
+  }
+
+  /* ambient bokeh string-light dots */
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background-image:
+      radial-gradient(2px 2px at 10% 20%, rgba(227,166,61,.35) 0, transparent 60%),
+      radial-gradient(2px 2px at 85% 15%, rgba(227,166,61,.25) 0, transparent 60%),
+      radial-gradient(2px 2px at 70% 80%, rgba(63,143,108,.25) 0, transparent 60%),
+      radial-gradient(2px 2px at 25% 85%, rgba(227,166,61,.2) 0, transparent 60%),
+      radial-gradient(2px 2px at 92% 60%, rgba(227,166,61,.3) 0, transparent 60%);
+    z-index:0;
+  }
+
+  .stage{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width:420px;
+  }
+
+  .signboard{
+    text-align:center;
+    margin-bottom:18px;
+  }
+  .signboard .lamp-row{
+    display:flex;
+    justify-content:center;
+    gap:6px;
+    margin-bottom:10px;
+  }
+  .signboard .lamp-row span{
+    width:6px; height:6px; border-radius:50%;
+    background:var(--gold);
+    box-shadow:0 0 8px 2px rgba(227,166,61,.7);
+    animation:flicker 2.4s ease-in-out infinite;
+  }
+  .signboard .lamp-row span:nth-child(2n){ animation-delay:.6s; }
+  .signboard .lamp-row span:nth-child(3n){ animation-delay:1.1s; }
+  @keyframes flicker{
+    0%,100%{ opacity:1; }
+    50%{ opacity:.45; }
+  }
+  .signboard h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    letter-spacing:.06em;
+    color:var(--paper);
+    font-size:1.5rem;
+    margin:0 0 4px;
+    text-transform:uppercase;
+  }
+  .signboard p{
+    margin:0;
+    color:var(--ink-faint);
+    font-size:.78rem;
+    letter-spacing:.04em;
+  }
+
+  /* ===== RECEIPT CARD ===== */
+  .receipt-wrap{
+    position:relative;
+    filter:drop-shadow(0 18px 30px rgba(0,0,0,.45));
+  }
+  .receipt{
+    background:var(--paper);
+    background-image:repeating-linear-gradient(180deg, rgba(0,0,0,0.015) 0px, rgba(0,0,0,0.015) 1px, transparent 1px, transparent 3px);
+    padding:30px 24px 26px;
+    position:relative;
+    transform:rotate(-.4deg);
+    color:var(--ink);
+  }
+  .receipt::before,
+  .receipt::after{
+    content:"";
+    position:absolute;
+    left:0; right:0;
+    height:12px;
+    background:
+      radial-gradient(circle at 8px 50%, transparent 6px, var(--paper) 6.5px) ,
+      radial-gradient(circle at 8px 50%, transparent 6px, var(--paper) 6.5px);
+    background-size:16px 12px;
+    background-repeat:repeat-x;
+  }
+  .receipt::before{ top:-1px; transform:translateY(-50%); }
+  .receipt::after{ bottom:-1px; transform:translateY(50%) rotate(180deg); }
+
+  .receipt-inner{ position:relative; }
+
+  .btn-back-top{
+    position:absolute;
+    top:-6px;
+    left:-6px;
+    background:none;
+    border:none;
+    color:var(--ink-faint);
+    font-family:'Space Mono', monospace;
+    font-size:.75rem;
+    font-weight:700;
+    cursor:pointer;
+    letter-spacing:.03em;
+  }
+  .btn-back-top:hover{ color:var(--ink); }
+
+  .rc-store{
+    text-align:center;
+    margin-bottom:10px;
+  }
+  .rc-store .name{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:1.15rem;
+    letter-spacing:.04em;
+  }
+  .rc-store .addr{
+    font-size:.68rem;
+    color:var(--ink-soft);
+    margin-top:2px;
+  }
+  .rc-date{
+    display:flex;
+    justify-content:space-between;
+    font-size:.68rem;
+    color:var(--ink-soft);
+    margin:10px 0;
+  }
+
+  .dash{
+    border:none;
+    border-top:1.5px dashed var(--dash);
+    margin:14px 0;
+  }
+
+  .sub-title{
+    color:var(--ink-soft);
+    font-size:.78rem;
+    text-align:center;
+    margin:-4px 0 16px;
+  }
+
+  .menu-block-title{
+    font-size:.72rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    text-align:left;
+    margin:16px 0 8px;
+    font-weight:700;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .menu-block-title::after{
+    content:"";
+    flex:1;
+    border-top:1.5px dotted var(--dash);
+  }
+
+  .section-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+  .grammar-grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:6px;
+    max-height:210px;
+    overflow-y:auto;
+    padding-right:2px;
+    margin-bottom:2px;
+  }
+  .grammar-grid::-webkit-scrollbar{ width:5px; }
+  .grammar-grid::-webkit-scrollbar-thumb{ background:var(--dash); border-radius:4px; }
+
+  .btn-section, .btn-grammar-mode{
+    background:transparent;
+    border:1.5px dashed var(--dash);
+    padding:9px 10px;
+    font-family:'Space Mono', monospace;
+    font-size:.8rem;
+    font-weight:700;
+    color:var(--ink);
+    cursor:pointer;
+    text-align:left;
+    transition:all .15s;
+    border-radius:var(--radius);
+  }
+  .btn-section{ text-align:center; }
+  .btn-section:hover, .btn-grammar-mode:hover{
+    background:var(--paper-2);
+    border-color:var(--ink-soft);
+    transform:translateX(1px);
+  }
+  .btn-grammar-mode{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .btn-grammar-mode::after{
+    content:"›";
+    color:var(--gold-dark);
+    font-weight:700;
+    font-size:1rem;
+  }
+
+  .btn-vocab-mode{
+    width:100%;
+    background:var(--gold);
+    color:var(--ink);
+    border:none;
+    padding:13px;
+    font-family:'Space Grotesk', sans-serif;
+    font-size:.9rem;
+    font-weight:700;
+    letter-spacing:.02em;
+    cursor:pointer;
+    transition:all .15s;
+    border-radius:var(--radius);
+    box-shadow:2px 2px 0 var(--gold-dark);
+  }
+  .btn-vocab-mode:hover{ transform:translate(1px,1px); box-shadow:1px 1px 0 var(--gold-dark); }
+
+  /* --- Quiz Styles --- */
+  .indonesian-text{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:1.05rem;
+    font-weight:700;
+    color:var(--ink);
+    margin-bottom:16px;
+    line-height:1.4;
+  }
+
+  .answer-area{
+    min-height:52px;
+    border:1.5px dashed var(--dash);
+    border-radius:var(--radius);
+    padding:10px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:16px;
+    background:rgba(0,0,0,.015);
+    align-content:flex-start;
+    transition:all .15s;
+  }
+  .answer-area.correct-border{ border-color:var(--herb); background:var(--herb-bg); }
+  .answer-area.wrong-border{ border-color:var(--chili); background:var(--chili-bg); }
+
+  .word-pool{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    justify-content:center;
+    margin-bottom:18px;
+    min-height:50px;
+  }
+
+  .word-card{
+    background:var(--paper);
+    border:1.5px solid var(--ink);
+    padding:7px 11px;
+    font-family:'Space Mono', monospace;
+    font-size:.85rem;
+    font-weight:700;
+    color:var(--ink);
+    cursor:pointer;
+    user-select:none;
+    border-radius:var(--radius);
+    position:relative;
+  }
+  .word-card::before{
+    content:"";
+    position:absolute;
+    top:-4px; left:6px;
+    width:6px; height:6px;
+    border-radius:50%;
+    background:var(--night-2);
+    box-shadow:0 0 0 1.5px var(--ink);
+  }
+  .word-card:hover{ background:var(--paper-2); }
+  .word-card.disabled{ pointer-events:none; opacity:.55; }
+
+  .options-container{
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+    margin-bottom:18px;
+  }
+  .btn-option{
+    background:transparent;
+    border:1.5px solid var(--dash);
+    padding:12px 14px;
+    font-family:'Space Mono', monospace;
+    font-size:.88rem;
+    font-weight:700;
+    color:var(--ink);
+    cursor:pointer;
+    text-align:left;
+    border-radius:var(--radius);
+    transition:all .15s;
+  }
+  .btn-option:hover:not(:disabled){ background:var(--paper-2); border-color:var(--ink-soft); }
+  .btn-option:disabled{ cursor:default; }
+
+  .correct{ background:var(--herb-bg) !important; border-color:var(--herb) !important; color:var(--herb) !important; }
+  .wrong{ background:var(--chili-bg) !important; border-color:var(--chili) !important; color:var(--chili) !important; }
+
+  .feedback-msg{ margin-bottom:14px; font-size:.9rem; font-weight:700; min-height:1.2em; }
+  .feedback-msg .ok{ color:var(--herb); }
+  .feedback-msg .no{ color:var(--chili); }
+  .feedback-msg .hint{ font-size:.78rem; color:var(--ink-soft); font-weight:400; display:block; margin-top:2px; }
+
+  .score-board{
+    margin-top:16px;
+    display:flex;
+    justify-content:space-between;
+    font-size:.85rem;
+    font-weight:700;
+    color:var(--ink);
+    border-top:1.5px dashed var(--dash);
+    padding-top:10px;
+  }
+  .score-board .label{ color:var(--ink-soft); font-weight:400; }
+
+  .btn-action{
+    padding:13px 20px;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    border-radius:var(--radius);
+    cursor:pointer;
+    width:100%;
+    font-family:'Space Grotesk', sans-serif;
+    font-size:.92rem;
+    font-weight:700;
+    letter-spacing:.02em;
+    display:none;
+    transition:all .15s;
+  }
+  .btn-action:hover{ opacity:.85; }
+  .btn-check{ background:var(--herb); }
+  .btn-menu{ background:transparent; color:var(--ink); border:1.5px dashed var(--dash); margin-top:8px; }
+
+  .correction-container{
+    margin-top:18px;
+    text-align:left;
+    display:none;
+    max-height:260px;
+    overflow-y:auto;
+    padding:0;
+  }
+  .correction-container h4{
+    margin:0 0 10px;
+    color:var(--ink-soft);
+    text-align:left;
+    font-size:.72rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    font-weight:700;
+  }
+  .correction-item{ margin-bottom:12px; padding-bottom:10px; border-bottom:1px dashed var(--dash); }
+  .corr-q{ font-weight:700; color:var(--ink); margin-bottom:4px; font-size:.85rem; }
+  .corr-w{ color:var(--chili); font-size:.78rem; }
+  .corr-c{ color:var(--herb); font-size:.78rem; }
+
+  .result-total{
+    text-align:center;
+    margin:6px 0 18px;
+  }
+  .result-total .big{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:2.1rem;
+    font-weight:700;
+  }
+  .result-total .thanks{
+    margin-top:14px;
+    font-size:.72rem;
+    letter-spacing:.12em;
+    color:var(--ink-faint);
+  }
+
+  .barcode{
+    height:34px;
+    margin:18px auto 4px;
+    width:80%;
+    background:repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 4px, var(--ink) 4px 5px, transparent 5px 9px, var(--ink) 9px 12px, transparent 12px 14px);
+    opacity:.85;
+  }
+
+  #loading-msg{
+    color:var(--ink-soft);
+    font-weight:700;
+    font-size:.85rem;
+    text-align:center;
+    margin-bottom:6px;
+    font-family:'Space Mono', monospace;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .signboard .lamp-row span{ animation:none; }
+  }
+
+  @media (max-width:400px){
+    .receipt{ padding:26px 16px 22px; }
+  }
+
+  button:focus-visible, .word-card:focus-visible{
+    outline:2px solid var(--gold-dark);
+    outline-offset:2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <div class="signboard">
+    <div class="lamp-row"><span></span><span></span><span></span><span></span><span></span></div>
+    <h1>Warung Bahasa</h1>
+    <p>Belajar Inggris sambil ngobrol di warung</p>
+  </div>
+
+  <div class="receipt-wrap">
+    <div class="receipt">
+      <div class="receipt-inner">
+
+        <!-- Layar Utama (Menu) -->
+        <div id="menu-screen">
+          <div class="rc-store">
+            <div class="name">STRUK BELAJAR</div>
+            <div class="addr">Jl. Grammar No. 1, Kedai Vocab</div>
+          </div>
+          <div class="rc-date">
+            <span id="rc-date-left">--/--/----</span>
+            <span>KASIR: Kamu</span>
+          </div>
+          <hr class="dash">
+
+          <div id="loading-msg">Menyiapkan menu soal...</div>
+
+          <div id="menu-content" style="display:none;">
+            <div class="sub-title">Pilih mode latihan kesukaanmu</div>
+
+            <div class="menu-block-title">🔥 Menu Spesial</div>
+            <button class="btn-vocab-mode" onclick="startVocabMode()">Tebak Arti Vocab Pilihan</button>
+
+            <div class="menu-block-title">📖 Grammar & Rules</div>
+            <div class="grammar-grid">
+              <button class="btn-grammar-mode" onclick="startGrammarMode('v1v2v3')">1. Perubahan V1, V2, V3</button>
+              <button class="btn-grammar-mode" onclick="startGrammarMode('dodoesdid')">2. Do, Does, Did</button>
+              <button class="btn-grammar-mode" onclick="startGrammarMode('modalv1')">3. Modal + V1 (can, will, dll)</button>
+              <button class="btn-grammar-mode" onclick="startGrammarMode('havehas')">4. Have / Has</button>
+              <button class="btn-grammar-mode" onclick="startGrammarMode('isamare')">5. Is / Am / Are</button>
+              <button class="btn-grammar-mode" onclick="startGrammarMode('vses')">6. Verb + s / es (Present)</button>
+              <button class="btn-grammar-mode" onclick="startGrammarMode('vtvi')">7. Transitive & Intransitive</button>
+              <button class="btn-grammar-mode" onclick="startGrammarMode('nouncount')">8. Countable & Uncountable</button>
+              <button class="btn-grammar-mode" onclick="startGrammarMode('pronouns')">9. Pronouns</button>
+            </div>
+
+            <div class="menu-block-title">🧩 Susun Kalimat</div>
+            <div id="section-grid" class="section-grid"></div>
+          </div>
+        </div>
+
+        <!-- Layar Kuis -->
+        <div id="quiz-screen" style="display:none;">
+          <button class="btn-back-top" onclick="backToMenu()">‹ kembali</button>
+
+          <div class="rc-store">
+            <div class="name" id="quiz-title">Latihan</div>
+          </div>
+          <hr class="dash">
+
+          <div id="indonesian" class="indonesian-text">Loading...</div>
+
+          <div id="answer-area" class="answer-area" style="display:none;"></div>
+          <div id="word-pool" class="word-pool" style="display:none;"></div>
+
+          <div id="options-container" class="options-container" style="display:none;"></div>
+
+          <div id="feedback-msg" class="feedback-msg"></div>
+          <div id="correction-container" class="correction-container"></div>
+
+          <button id="check-btn" class="btn-action btn-check" onclick="checkSentenceAnswer()">Cek Jawaban</button>
+          <button id="next-btn" class="btn-action" style="margin-top:10px;" onclick="nextQuestion()">Soal Berikutnya</button>
+          <button id="back-menu-btn" class="btn-action btn-menu" style="margin-top:10px;" onclick="backToMenu()">Kembali ke Menu</button>
+
+          <div id="score" class="score-board"><span class="label">Skor</span><span id="score-val">0 / 0</span></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script id="quiz-data-json" type="application/json">
+{"quizData": [{"id": "Udah sarapan?", "en": "You got your breakfast?"}, {"id": "Udah sarapan?", "en": "Have you got your breakfast?"}, {"id": "Menu apa buat sarapan?", "en": "What's for breakfast?"}, {"id": "Aku lapar. (starving)", "en": "I'm starving."}, {"id": "Aku lapar. (hungry)", "en": "I'm hungry."}, {"id": "Perutku keroncongan.", "en": "My stomach is growling."}, {"id": "Nyari makan yuk.", "en": "Let's get something to eat."}, {"id": "Mau makan siang apa?", "en": "What do you want for lunch?"}, {"id": "Selera makan ku hilang.", "en": "I lost my appetite."}, {"id": "Kayanya aku mau muntah.", "en": "I'm feeling like I wanna throw up."}, {"id": "Mungkin kamu masuk angin.", "en": "Maybe you catch a cold."}, {"id": "Kamu masak apa?", "en": "What are you cooking?"}, {"id": "Baunya bikin ngiler.", "en": "The smell makes me water my mouth."}, {"id": "Aku ga suka masak.", "en": "I don't like cooking."}, {"id": "Aku tukang masak yang buruk.", "en": "I'm a bad cook."}, {"id": "Terlalu asin/ keasinan.", "en": "It's too salty."}, {"id": "Kamu harus tambahin gula lagi.", "en": "You need to add some more sugar."}, {"id": "Aku suka makanan cepat saji.", "en": "I like fast food."}, {"id": "Cafe di ujung jalan sana payah.", "en": "The cafe in the corner is terrible."}, {"id": "Itu rumah makan prasmanan?", "en": "Is it a buffet restaurant?"}, {"id": "Itu rumah makan *a la carte.", "en": "It's an ala carte restaurant."}, {"id": "Pelayanannya bagus tapi masakannya payah.", "en": "The service is good, but the cook sucks."}, {"id": "Bisa beliin makan siang ga?", "en": "Can you buy me my lunch?"}, {"id": "Bisa nitip makanan ga?", "en": "Can you get me something to eat?"}, {"id": "Kamu keliatan capek. Mau ngopi sama aku?", "en": "You look tired. Would you like to have a cup of coffee with me ?"}, {"id": "Aku traktir.", "en": "It's my treat."}, {"id": "Emang sekarang aku butuh cafein.", "en": "Caffeine is exactly what I need right now."}, {"id": "Cuci tanganmu dulu sebelum makan.", "en": "Wash your hands before eating."}, {"id": "Aku ga suka makan pake sendok.", "en": "I don't like to eat with spoon."}, {"id": "Jangan ngecap.", "en": "Don't smack your lips."}, {"id": "Ada sesuatu di gigi kamu.", "en": "You got something on your tooth."}, {"id": "Jangan bersihin gigi di depan umum.", "en": "Don't pick your tooth in public."}, {"id": "Kamu makannya banyak.", "en": "You eat like a horse."}, {"id": "Kamu makannya sedikit.", "en": "You eat like a bird."}, {"id": "Saya vegetarian.", "en": "I am a vegan."}, {"id": "Saya gak makan daging.", "en": "I don't eat meat."}, {"id": "Saya gak suka daging.", "en": "I don't like meat."}, {"id": "Saya gak suka ikan.", "en": "I hate fish."}, {"id": "Aku gak suka ikan karna bau amis.", "en": "I don't like fish because it's fishy."}, {"id": "Saya lebih suka beli makanan dari pada masak.", "en": "I'd rather buy food than cook."}, {"id": "Saya benar-benar suka makanan pedas.", "en": "I love spicy food like crazy."}, {"id": "Terlalu banyak makan nasi gak baik buat kesehatan kamu.", "en": "Eating too much rice is not good for your health."}, {"id": "Mau nyobain?", "en": "Have a bite?"}, {"id": "Tambah lagi!", "en": "Have some more!"}, {"id": "Rasanya enak.", "en": "The taste is good."}, {"id": "Ini terlalu matang.", "en": "It's overcooked."}, {"id": "Ini kembaliannya.", "en": "Here is your change."}, {"id": "Punya uang pecaan kecil?", "en": "Do you have a small change?"}, {"id": "Bisa nukar uang 50 ribu?", "en": "Could you break a Rp. 50.000 (50's) for me?"}, {"id": "Ok. Mau pecahan berapa?", "en": "Sure. How do you want it?"}, {"id": "20 ribuan 2 dan sisanya 10 ribu?", "en": "Could I have two 20's and the rest in ten?"}, {"id": "Maaf, kayanya uang kembaliannya keliru.", "en": "Excuse me, I think you've given me the wrong change."}, {"id": "Bau nya enak.", "en": "The smell is good."}, {"id": "Aku nyium bau gosong.", "en": "I smell something burning."}, {"id": "Ya ampun! Aku lupa matiin kompor.", "en": "OMG! I forgot to turn off the stove."}, {"id": "Rasanya basi!", "en": "It tastes stale!"}, {"id": "Lain kali kamu yang traktir.", "en": "Next time you'll treat."}, {"id": "Aku ga bisa makan diluar. Aku bokek.", "en": "I can't eat out. I'm broke."}, {"id": "Seberapa sering kamu makan diluar?", "en": "How often do you eat out?"}, {"id": "Saya mau pesan meja buat makan makan.", "en": "I'd like to reserve a table for dinner."}, {"id": "Aku yang bayarin.", "en": "It's on me."}, {"id": "Aku yang traktir.", "en": "It's my treat."}, {"id": "Patungan ya.", "en": "Let's share the bill."}, {"id": "Siapa di dalam?", "en": "Who's inside?"}, {"id": "Bisa cepetan dikit ga?", "en": "Can you make it a little faster?"}, {"id": "Udah ga bisa nahan nih/ sudah kebelet.", "en": "I can't bear it any longer."}, {"id": "Tunggu. Aku baru aja masuk.", "en": "Wait up. I just got in."}, {"id": "Cuma cuci muka aja", "en": "I'm just washing my face"}, {"id": "Cuma pipis aja.", "en": "I'm just peeing"}, {"id": "Jangan lupa disiram.", "en": "Don't forget to flush."}], "specialVocabData": [{"word": "starving", "meaning": "Sangat lapar / kelaparan"}, {"word": "growling", "meaning": "Keroncongan (suara perut)"}, {"word": "appetite", "meaning": "Selera makan"}, {"word": "throw up", "meaning": "Muntah"}, {"word": "bad cook", "meaning": "Koki/tukang masak yang buruk"}, {"word": "a la carte", "meaning": "Menu pesanan satuan"}, {"word": "my treat", "meaning": "Aku yang traktir"}, {"word": "smack lips", "meaning": "Mengecap saat makan"}, {"word": "eat like a horse", "meaning": "Makannya sangat banyak"}, {"word": "eat like a bird", "meaning": "Makannya sangat sedikit"}, {"word": "fishy", "meaning": "Bau amis"}, {"word": "overcooked", "meaning": "Terlalu matang"}, {"word": "stale", "meaning": "Basi / tidak segar lagi"}, {"word": "small change", "meaning": "Uang pecahan kecil"}, {"word": "catch a cold", "meaning": "Masuk angin / kena flu"}], "grammarData": {"v1v2v3": [{"q": "Bentuk V2 (Past) dari kata 'eat' adalah...", "options": ["ate", "eaten", "eating", "eats"], "ans": "ate"}, {"q": "Bentuk V3 (Past Participle) dari kata 'go' adalah...", "options": ["gone", "went", "going", "goes"], "ans": "gone"}, {"q": "Apa V2 dari kata kerja 'buy'?", "options": ["bought", "buyed", "build", "brought"], "ans": "bought"}, {"q": "Kata kerja dasar (V1) dari 'written' adalah...", "options": ["write", "wrote", "writed", "writing"], "ans": "write"}, {"q": "Bentuk V3 dari kata 'see' adalah...", "options": ["seen", "saw", "sees", "seeing"], "ans": "seen"}, {"q": "Manakah bentuk V2 yang benar untuk 'make'?", "options": ["made", "maked", "make", "making"], "ans": "made"}, {"q": "Apa V3 dari kata kerja irregular 'take'?", "options": ["taken", "took", "takes", "taking"], "ans": "taken"}], "dodoesdid": [{"q": "She ... not like eating fish. (Subjek tunggal, kalimat negatif present)", "options": ["does", "do", "did", "done"], "ans": "does"}, {"q": "What ... you want for lunch yesterday? (Lampau/Past)", "options": ["did", "do", "does", "done"], "ans": "did"}, {"q": "I ... not know how to cook a steak.", "options": ["do", "does", "did", "is"], "ans": "do"}, {"q": "... he usually drink coffee in the morning?", "options": ["Does", "Do", "Did", "Is"], "ans": "Does"}, {"q": "They ... not finish their food last night.", "options": ["did", "do", "does", "are"], "ans": "did"}, {"q": "Where ... you usually buy your lunch?", "options": ["do", "does", "did", "are"], "ans": "do"}, {"q": "... your mother cook every day?", "options": ["Does", "Do", "Did", "Is"], "ans": "Does"}], "modalv1": [{"q": "I can ... a delicious fried rice.", "options": ["cook", "cooked", "cooking", "cooks"], "ans": "cook"}, {"q": "You must ... your hands before eating.", "options": ["wash", "washed", "washing", "washes"], "ans": "wash"}, {"q": "She will ... me a cup of coffee.", "options": ["buy", "bought", "buying", "buys"], "ans": "buy"}, {"q": "We should ... healthy food.", "options": ["eat", "ate", "eaten", "eating"], "ans": "eat"}, {"q": "Could you ... me the menu, please?", "options": ["give", "gave", "given", "giving"], "ans": "give"}, {"q": "He may ... late for dinner.", "options": ["be", "is", "was", "been"], "ans": "be"}, {"q": "You must not ... while your mouth is full.", "options": ["talk", "talked", "talking", "talks"], "ans": "talk"}], "havehas": [{"q": "She ... already eaten her breakfast.", "options": ["has", "have", "had", "is"], "ans": "has"}, {"q": "I ... lost my appetite.", "options": ["have", "has", "had", "am"], "ans": "have"}, {"q": "We ... finished our lunch.", "options": ["have", "has", "had", "are"], "ans": "have"}, {"q": "He ... cooked dinner for us.", "options": ["has", "have", "had", "is"], "ans": "has"}, {"q": "They ... never tried spicy food before.", "options": ["have", "has", "had", "are"], "ans": "have"}, {"q": "My mother ... bought some vegetables.", "options": ["has", "have", "had", "is"], "ans": "has"}, {"q": "I ... a new recipe to try.", "options": ["have", "has", "had", "am"], "ans": "have"}], "isamare": [{"q": "I ... very hungry right now.", "options": ["am", "is", "are", "be"], "ans": "am"}, {"q": "She ... cooking in the kitchen.", "options": ["is", "am", "are", "be"], "ans": "is"}, {"q": "They ... ordering fast food.", "options": ["are", "is", "am", "be"], "ans": "are"}, {"q": "You ... a good cook.", "options": ["are", "is", "am", "be"], "ans": "are"}, {"q": "The soup ... too salty.", "options": ["is", "are", "am", "be"], "ans": "is"}, {"q": "My friends ... vegetarians.", "options": ["are", "is", "am", "be"], "ans": "are"}, {"q": "The kitchen ... smelling so good.", "options": ["is", "are", "am", "be"], "ans": "is"}], "vses": [{"q": "He always ... coffee in the morning.", "options": ["drinks", "drink", "drinking", "drank"], "ans": "drinks"}, {"q": "She ... delicious food every weekend.", "options": ["cooks", "cook", "cooking", "cooked"], "ans": "cooks"}, {"q": "My brother ... like spicy food.", "options": ["doesn't", "don't", "didn't", "aren't"], "ans": "doesn't"}, {"q": "The restaurant ... open at 10 AM.", "options": ["opens", "open", "opening", "opened"], "ans": "opens"}, {"q": "It ... good when food is fresh.", "options": ["tastes", "taste", "tasting", "tasted"], "ans": "tastes"}, {"q": "An honest cook ... clean the kitchen.", "options": ["keeps", "keep", "keeping", "kept"], "ans": "keeps"}, {"q": "She ... her hands before touching food.", "options": ["washes", "wash", "washing", "washed"], "ans": "washes"}], "vtvi": [{"q": "Kata kerja 'eat' dalam kalimat 'I eat an apple' bersifat...", "options": ["Transitive (Vt - butuh objek)", "Intransitive (Vi - tidak butuh objek)", "Modal", "Auxiliary"], "ans": "Transitive (Vt - butuh objek)"}, {"q": "Kata kerja 'sleep' bersifat...", "options": ["Intransitive (Vi - tidak butuh objek)", "Transitive (Vt - butuh objek)", "Noun", "Adjective"], "ans": "Intransitive (Vi - tidak butuh objek)"}, {"q": "Mana kata kerja yang bersifat Transitive (Vt)?", "options": ["buy (membeli)", "arrive (tiba)", "fall (jatuh)", "smile (tersenyum)"], "ans": "buy (membeli)"}, {"q": "Mana kata kerja yang bersifat Intransitive (Vi)?", "options": ["cry (menangis)", "cook (memasak)", "drink (minum)", "write (menulis)"], "ans": "cry (menangis)"}, {"q": "Kalimat 'She is laughing' menggunakan kata kerja...", "options": ["Intransitive (Vi)", "Transitive (Vt)", "Passive", "Modal"], "ans": "Intransitive (Vi)"}, {"q": "Kalimat 'He bought a cup of coffee' menggunakan kata kerja...", "options": ["Transitive (Vt)", "Intransitive (Vi)", "Linking verb", "Adverb"], "ans": "Transitive (Vt)"}, {"q": "Kata kerja 'arrive' (tiba) adalah contoh...", "options": ["Intransitive (Vi)", "Transitive (Vt)", "Noun", "Pronoun"], "ans": "Intransitive (Vi)"}], "nouncount": [{"q": "Manakah yang termasuk Uncountable Noun (tidak bisa dihitung)?", "options": ["water (air)", "apple (apel)", "chair (kursi)", "book (buku)"], "ans": "water (air)"}, {"q": "Manakah yang termasuk Countable Noun (bisa dihitung)?", "options": ["spoon (sendok)", "rice (nasi)", "sugar (gula)", "milk (susu)"], "ans": "spoon (sendok)"}, {"q": "Satuan hitung untuk Uncountable noun 'rice' adalah...", "options": ["a bowl of rice", "a rice", "two rices", "many rice"], "ans": "a bowl of rice"}, {"q": "Mana yang merupakan Uncountable Noun terkait makanan?", "options": ["salt (garam)", "egg (telur)", "carrot (wortel)", "burger (burger)"], "ans": "salt (garam)"}, {"q": "Bentuk plural regular dari 'apple' adalah...", "options": ["apples", "applen", "applise", "apple"], "ans": "apples"}, {"q": "Bentuk plural irregular (tidak beraturan) dari 'child' adalah...", "options": ["children", "childs", "childes", "childrens"], "ans": "children"}, {"q": "Manakah kata benda (noun) yang berbentuk uncountable?", "options": ["coffee (kopi)", "cup (cangkir)", "plate (piring)", "fork (garpu)"], "ans": "coffee (kopi)"}], "pronouns": [{"q": "Pronoun subject untuk menggantikan nama 'Budi' adalah...", "options": ["he", "him", "his", "himself"], "ans": "he"}, {"q": "This book belongs to me. It is ... book. (Possessive Adjective)", "options": ["my", "mine", "me", "myself"], "ans": "my"}, {"q": "Can you help ...? (Pronoun sebagai Object)", "options": ["me", "my", "mine", "myself"], "ans": "me"}, {"q": "The pen is not yours, it is ... (Possessive Pronoun)", "options": ["mine", "my", "me", "myself"], "ans": "mine"}, {"q": "I cut ... while cooking yesterday. (Reflexive Pronoun)", "options": ["myself", "me", "my", "mine"], "ans": "myself"}, {"q": "She loves ... cat very much. (Possessive Adjective)", "options": ["her", "she", "hers", "herself"], "ans": "her"}, {"q": "This is our food. It is ... (Possessive Pronoun)", "options": ["ours", "our", "us", "we"], "ans": "ours"}]}}
+</script>
+<script>
+// ====== Data (di-embed langsung, tidak perlu fetch/web server) ======
+const RAW_DATA = JSON.parse(document.getElementById('quiz-data-json').textContent);
+let quizData = RAW_DATA.quizData;
+let specialVocabData = RAW_DATA.specialVocabData;
+let grammarData = RAW_DATA.grammarData;
+
+let mode = "sentence"; // 'sentence', 'vocab', atau 'grammar'
+let activeQuizData = [];
+let currentQuestion = 0;
+let score = 0;
+let mistakes = [];
+let currentCorrectAnswer = "";
+let currentQuestionText = "";
+
+const soalPerSection = 7; // Jumlah soal per section
+
+function printReceiptDate() {
+    const el = document.getElementById('rc-date-left');
+    if (!el) return;
+    const d = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    el.textContent = `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+window.onload = () => {
+    printReceiptDate();
+    try {
+        generateSectionButtons();
+        document.getElementById('loading-msg').style.display = 'none';
+        document.getElementById('menu-content').style.display = 'block';
+    } catch (err) {
+        console.error('Gagal memuat data soal:', err);
+        document.getElementById('loading-msg').innerHTML =
+            '<span style="color:#c6432b;">Gagal memuat data soal. Coba muat ulang halaman.</span>';
+    }
+};
+
+// Fungsi membuat tombol Section otomatis
+function generateSectionButtons() {
+    const sectionGrid = document.getElementById('section-grid');
+    sectionGrid.innerHTML = '';
+
+    const totalSections = Math.ceil(quizData.length / soalPerSection);
+
+    for (let i = 1; i <= totalSections; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'btn-section';
+        btn.innerText = `Section ${i}`;
+        btn.onclick = () => startSection(i);
+        sectionGrid.appendChild(btn);
+    }
+}
+
+function shuffle(array) {
+    return array.sort(() => Math.random() - 0.5);
+}
+
+function backToMenu() {
+    document.getElementById('quiz-screen').style.display = 'none';
+    document.getElementById('menu-screen').style.display = 'block';
+}
+
+// Handler Menu Pilihan
+function startSection(sectionNumber) {
+    mode = "sentence";
+    const startIndex = (sectionNumber - 1) * soalPerSection;
+    const endIndex = startIndex + soalPerSection;
+    activeQuizData = quizData.slice(startIndex, endIndex);
+    activeQuizData = shuffle(activeQuizData);
+    initQuizScreen(`Section ${sectionNumber}`);
+}
+
+function startVocabMode() {
+    mode = "vocab";
+    activeQuizData = shuffle([...specialVocabData]).slice(0, 10);
+    initQuizScreen("🔥 Vocab Spesial");
+}
+
+function startGrammarMode(topicKey) {
+    mode = "grammar";
+    activeQuizData = grammarData[topicKey];
+    initQuizScreen("📖 Latihan Grammar");
+}
+
+function initQuizScreen(title) {
+    currentQuestion = 0;
+    score = 0;
+    mistakes = [];
+
+    document.getElementById('menu-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
+    document.getElementById('quiz-title').innerText = title;
+    document.getElementById('back-menu-btn').style.display = 'none';
+    document.getElementById('score').style.display = 'flex';
+    document.getElementById('correction-container').style.display = 'none';
+    document.getElementById('correction-container').innerHTML = '';
+
+    loadQuestion();
+}
+
+function loadQuestion() {
+    document.getElementById('feedback-msg').innerHTML = '';
+
+    if (mode === "sentence") {
+        loadSentenceQuestion();
+    } else if (mode === "vocab") {
+        loadVocabQuestion();
+    } else if (mode === "grammar") {
+        loadGrammarQuestion();
+    }
+}
+
+// 1. Mode Susun Kalimat
+function loadSentenceQuestion() {
+    document.getElementById('answer-area').style.display = 'flex';
+    document.getElementById('word-pool').style.display = 'flex';
+    document.getElementById('options-container').style.display = 'none';
+
+    const q = activeQuizData[currentQuestion];
+    let cleanedString = q.en.replace(/[.,?!*()]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+
+    currentCorrectAnswer = cleanedString;
+    currentQuestionText = q.id;
+
+    document.getElementById('indonesian').innerHTML = `${currentQuestion + 1}. ${q.id}`;
+
+    const answerArea = document.getElementById('answer-area');
+    const wordPool = document.getElementById('word-pool');
+
+    answerArea.innerHTML = '';
+    wordPool.innerHTML = '';
+    answerArea.className = 'answer-area';
+
+    let correctWords = currentCorrectAnswer.split(' ');
+    let decoyWords = [];
+    quizData.forEach(item => {
+        if (item.en !== q.en) {
+            let cleanItem = item.en.replace(/[.,?!*()]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+            decoyWords.push(...cleanItem.split(' '));
+        }
+    });
+    decoyWords = [...new Set(decoyWords)].filter(w => !correctWords.includes(w) && w.length > 0);
+    decoyWords = shuffle(decoyWords);
+    let selectedDecoys = decoyWords.slice(0, 3);
+
+    let finalWords = shuffle(correctWords.concat(selectedDecoys));
+
+    finalWords.forEach(w => {
+        const wordBtn = document.createElement('div');
+        wordBtn.className = 'word-card';
+        wordBtn.innerText = w;
+        wordBtn.tabIndex = 0;
+        wordBtn.onclick = () => moveWord(wordBtn);
+        wordBtn.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); moveWord(wordBtn); } };
+        wordPool.appendChild(wordBtn);
+    });
+
+    document.getElementById('check-btn').style.display = 'block';
+    document.getElementById('next-btn').style.display = 'none';
+    updateScoreBoard();
+}
+
+// 2. Mode Vocab Spesial
+function loadVocabQuestion() {
+    document.getElementById('answer-area').style.display = 'none';
+    document.getElementById('word-pool').style.display = 'none';
+    document.getElementById('check-btn').style.display = 'none';
+
+    const optContainer = document.getElementById('options-container');
+    optContainer.style.display = 'flex';
+    optContainer.innerHTML = '';
+
+    const q = activeQuizData[currentQuestion];
+    currentCorrectAnswer = q.meaning;
+    currentQuestionText = q.word;
+
+    document.getElementById('indonesian').innerHTML = `${currentQuestion + 1}. Apa arti dari <u>"${q.word}"</u>?`;
+
+    let options = [q.meaning];
+    while (options.length < 4 && options.length < specialVocabData.length) {
+        let randMeaning = specialVocabData[Math.floor(Math.random() * specialVocabData.length)].meaning;
+        if (!options.includes(randMeaning)) options.push(randMeaning);
+    }
+    options = shuffle(options);
+
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-option';
+        btn.innerText = opt;
+        btn.onclick = () => checkOptionAnswer(btn, opt);
+        optContainer.appendChild(btn);
+    });
+
+    document.getElementById('next-btn').style.display = 'none';
+    updateScoreBoard();
+}
+
+// 3. Mode Grammar
+function loadGrammarQuestion() {
+    document.getElementById('answer-area').style.display = 'none';
+    document.getElementById('word-pool').style.display = 'none';
+    document.getElementById('check-btn').style.display = 'none';
+
+    const optContainer = document.getElementById('options-container');
+    optContainer.style.display = 'flex';
+    optContainer.innerHTML = '';
+
+    const q = activeQuizData[currentQuestion];
+    currentCorrectAnswer = q.ans;
+    currentQuestionText = q.q;
+
+    document.getElementById('indonesian').innerHTML = `${currentQuestion + 1}. ${q.q}`;
+
+    let options = shuffle([...q.options]);
+
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-option';
+        btn.innerText = opt;
+        btn.onclick = () => checkOptionAnswer(btn, opt);
+        optContainer.appendChild(btn);
+    });
+
+    document.getElementById('next-btn').style.display = 'none';
+    updateScoreBoard();
+}
+
+function updateScoreBoard() {
+    document.getElementById('score-val').innerText = `${score} / ${activeQuizData.length}`;
+}
+
+function moveWord(wordElement) {
+    const wordPool = document.getElementById('word-pool');
+    const answerArea = document.getElementById('answer-area');
+    if (wordElement.parentElement === wordPool) {
+        answerArea.appendChild(wordElement);
+    } else {
+        wordPool.appendChild(wordElement);
+    }
+}
+
+function checkSentenceAnswer() {
+    const answerArea = document.getElementById('answer-area');
+    const feedback = document.getElementById('feedback-msg');
+
+    const userWords = Array.from(answerArea.children).map(card => card.innerText);
+    const userAnswer = userWords.join(' ');
+
+    document.querySelectorAll('.word-card').forEach(card => card.classList.add('disabled'));
+
+    if (userAnswer === currentCorrectAnswer) {
+        answerArea.classList.add('correct-border');
+        feedback.innerHTML = '<span class="ok">✅ Sempurna!</span>';
+        score++;
+    } else {
+        answerArea.classList.add('wrong-border');
+        feedback.innerHTML = `<span class="no">❌ Kurang tepat.</span><span class="hint">Jawaban benar: <b>${currentCorrectAnswer}</b></span>`;
+        mistakes.push({ question: currentQuestionText, wrongAns: userAnswer || "(Kosong)", correctAns: currentCorrectAnswer });
+    }
+
+    document.getElementById('check-btn').style.display = 'none';
+    document.getElementById('next-btn').style.display = 'block';
+    updateScoreBoard();
+}
+
+function checkOptionAnswer(selectedBtn, selectedOpt) {
+    const buttons = document.querySelectorAll('.btn-option');
+    buttons.forEach(btn => btn.disabled = true);
+
+    const feedback = document.getElementById('feedback-msg');
+
+    if (selectedOpt === currentCorrectAnswer) {
+        selectedBtn.classList.add('correct');
+        feedback.innerHTML = '<span class="ok">✅ Benar Sekali!</span>';
+        score++;
+    } else {
+        selectedBtn.classList.add('wrong');
+        feedback.innerHTML = `<span class="no">❌ Kurang Tepat.</span>`;
+        buttons.forEach(btn => {
+            if (btn.innerText === currentCorrectAnswer) btn.classList.add('correct');
+        });
+        mistakes.push({ question: currentQuestionText, wrongAns: selectedOpt, correctAns: currentCorrectAnswer });
+    }
+
+    document.getElementById('next-btn').style.display = 'block';
+    updateScoreBoard();
+}
+
+function nextQuestion() {
+    currentQuestion++;
+    if (currentQuestion < activeQuizData.length) {
+        loadQuestion();
+    } else {
+        let wrongCount = mistakes.length;
+
+        document.getElementById('indonesian').innerHTML = '';
+        document.getElementById('answer-area').style.display = 'none';
+        document.getElementById('word-pool').style.display = 'none';
+        document.getElementById('options-container').style.display = 'none';
+        document.getElementById('check-btn').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('feedback-msg').innerHTML = '';
+        document.getElementById('score').style.display = 'none';
+
+        const resultHTML = `
+            <div class="result-total">
+                <div class="big">${score} / ${activeQuizData.length}</div>
+                <div style="margin-top:6px; color:var(--ink-soft); font-size:.85rem;">
+                    Benar: <span style="color:var(--herb); font-weight:700;">${score}</span> &nbsp;|&nbsp;
+                    Salah: <span style="color:var(--chili); font-weight:700;">${wrongCount}</span>
+                </div>
+                <div class="thanks">*** TERIMA KASIH TELAH BELAJAR ***</div>
+                <div class="barcode"></div>
+            </div>`;
+        document.getElementById('feedback-msg').insertAdjacentHTML('beforebegin', resultHTML);
+
+        if (wrongCount > 0) {
+            let corrHTML = '<h4>Koreksi Jawaban</h4>';
+            mistakes.forEach((m, index) => {
+                corrHTML += `
+                <div class="correction-item">
+                    <div class="corr-q">${index + 1}. ${m.question}</div>
+                    <div class="corr-w">❌ Jawabanmu: ${m.wrongAns}</div>
+                    <div class="corr-c">✅ Seharusnya: ${m.correctAns}</div>
+                </div>`;
+            });
+            const corrContainer = document.getElementById('correction-container');
+            corrContainer.innerHTML = corrHTML;
+            corrContainer.style.display = 'block';
+        }
+
+        document.getElementById('back-menu-btn').style.display = 'block';
+    }
+}
+</script>
+</body>
+</html>
